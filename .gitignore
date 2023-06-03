@@ -8,6 +8,13 @@
 # Output files
 *.png
 
+# Data files
+*.csv
+*.DS_Store
+
+# Personal files
+parameters.py
+
 # Python runtime
 *.pyc
 *.egg-info

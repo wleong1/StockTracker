@@ -19,8 +19,13 @@ class NewsDisplay(QWidget):
         self.company_news_section.setFont(QFont("Times", 9))
 
     def display_company_news(self, company_name: str):
-        """Displays news headlines for a given company name"""
-        company_news = self.collect_news(company_name=company_name)
+        """
+        Display recent news related to a specific company.
+
+        :param company_name: (str) The name of the company for which news is displayed.
+        :return: None
+        """
+        company_news: list = self.collect_news(company_name=company_name)
 
         # Remove news from previously selected company, if any
         while self.vbox_news.count():
@@ -39,15 +44,20 @@ class NewsDisplay(QWidget):
 
     @staticmethod
     def collect_news(company_name: str):
-        """Collects recent news articles for a given company name"""
-        news_params = {
+        """
+        Collect recent news articles related to a specific company and format them.
+
+        :param company_name: (str) The name of the company to collect news for.
+        :return: (list) A list of formatted news headlines with respective URLs.
+        """
+        news_params: dict = {
             "apiKey": NEWS_API_KEY,
             "qInTitle": company_name
         }
 
-        news_response = requests.get(NEWS_ENDPOINT, params=news_params)
-        articles = news_response.json()["articles"]
-        five_articles = articles[:5]
+        news_response: requests.models.Response = requests.get(NEWS_ENDPOINT, params=news_params)
+        articles: list = news_response.json()["articles"]
+        five_articles: list = articles[:5]
 
         # Generate formatted headlines with clickable URLs
         return [

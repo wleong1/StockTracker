@@ -14,6 +14,7 @@ class LivePriceDisplay(QWidget):
 
     def __init__(self, parent=None):
         super().__init__()
+        self.price = None
         self.parent = parent
         self.share_price_label = QLabel("Live price")
         self.share_price_label.setMaximumSize(700, 500)
@@ -22,34 +23,28 @@ class LivePriceDisplay(QWidget):
 
     def display_final_price(self, company_name: str) -> None:
         """
-        Fetches the live price of a company and updates the display label
+        Attempts to display the final price of the selected company.
 
-        Args:
-            company_name (str): Name of the company
-
-        Returns:
-            None
-
+        :param company_name: (str) The name of the name to display the final price for.
+        :return:
         """
+
         try:
             # Gets last available price by default
-            price = DataProcessing().convert_to_dict(company_name=company_name)["close"][-1]
-
-            price_params = {
+            price_params: dict = {
                 "apikey": ALPHA_VANTAGE_API_KEY,
-                "function": "TIME_SERIES_DAILY_ADJUSTED",
+                "function": "TIME_SERIES_DAILY",
                 "symbol": company_name
             }
-
-            price_response = requests.get(ALPHA_VANTAGE_ENDPOINT, params=price_params)
+            price_response: requests.models.Response = requests.get(ALPHA_VANTAGE_ENDPOINT, params=price_params)
             if price_response.ok:
-                response_data = price_response.json()
+                response_data: dict = price_response.json()
                 if "Time Series (Daily)" in response_data:
-                    price_list = response_data["Time Series (Daily)"]
-                    most_recent_day = next(iter(price_list))
-                    price = price_list[most_recent_day]["4. close"]
+                    price_list: dict = response_data["Time Series (Daily)"]
+                    most_recent_day: str = next(iter(price_list))
+                    self.price: float = price_list[most_recent_day]["4. close"]
 
         except (requests.RequestException, KeyError, IndexError):
-            price = "Error fetching price"
+            self.price: str = "Error fetching price"
 
-        self.share_price_label.setText(f"{company_name}:\n{price}")
+        self.share_price_label.setText(f"{company_name}:\n{self.price}")

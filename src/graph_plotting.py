@@ -4,9 +4,10 @@ from bokeh.plotting import figure
 from bokeh.resources import CDN
 from bokeh.embed import file_html
 from bokeh.models import ColumnDataSource
-import numpy as np
-
 from data_processing import DataProcessing
+
+import numpy as np
+import pandas as pd
 
 PLOT_HEIGHT = 700
 PLOT_WIDTH = 1100
@@ -14,21 +15,26 @@ PLOT_WIDTH = 1100
 
 class GraphPlotting(QWidget):
     """Plots graph from available data"""
+    web_view: QWebEngineView
 
     def __init__(self, parent=None):
         super().__init__()
-        self.web_view = None
+        self.web_view: str = None
         self.parent = parent
         self.vbox_left = QVBoxLayout()
         self.placeholder_graph()
+        self.data_processor = DataProcessing()
 
     def placeholder_graph(self):
-        """Creates a placeholder graph using Bokeh"""
+        """
+        Creates a placeholder graph using Bokeh
+        :return:
+        """
         p = figure()
         p.line([1, 2, 3, 4, 5], [5, 4, 3, 2, 1])
 
         # Convert the Bokeh plot to HTML
-        html = file_html(p, CDN, "my plot")
+        html: str = file_html(p, CDN, "my plot")
 
         # Create a web view widget to display the Bokeh plot
         self.web_view = QWebEngineView()
@@ -38,19 +44,8 @@ class GraphPlotting(QWidget):
 
     @staticmethod
     def plotting_data(filename: dict) -> str:
-        """
-        Generates a Bokeh plot based on the provided data dictionary
-
-        Args:
-            filename (dict): Dictionary containing the data to be plotted
-
-        Returns:
-            str: HTML representation of the Bokeh plot
-
-        """
-        dates = np.array(filename["date"], dtype=np.datetime64)
-        source = ColumnDataSource(data=dict(date=dates, close=filename["close"]))
-
+        dates: np.ndarray = np.array(filename["date"], dtype=np.datetime64)
+        source: ColumnDataSource = ColumnDataSource(data=dict(date=dates, close=filename["close"]))
         p = figure(height=PLOT_HEIGHT, width=PLOT_WIDTH, tools="xpan, hover", toolbar_location=None,
                    x_axis_type="datetime", x_axis_location="below", x_range=(dates[250], dates[-1]),
                    background_fill_color="#efefef")
@@ -63,15 +58,7 @@ class GraphPlotting(QWidget):
         return html
 
     def plot_selected_graph(self, company_name: str):
-        """
-        Plots the graph for the selected company
-
-        Args:
-            company_name (str): Name of the company
-
-        """
-        data = DataProcessing().convert_to_dict(company_name)
-
+        data: dict = self.data_processor.companies_data[company_name].to_dict()
         html = self.plotting_data(data)
 
         if hasattr(self, 'web_view'):

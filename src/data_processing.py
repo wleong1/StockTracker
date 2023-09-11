@@ -1,24 +1,26 @@
 import pandas as pd
+from model import Model
 
 
 class DataProcessing:
     """Accesses csv files directory and converts the csv files to dictionaries"""
+
     def __init__(self, parent=None):
         super().__init__()
+        self.data = None
         self.parent = parent
-        self.path = "../individual_stocks_5yr/"
+        self.path: str = "../individual_stocks_5yr/"
+        self.companies_list = Model().company_list
+        self.companies_data = self.process_data()
 
-    def convert_to_dict(self, company_name: str) -> dict:
-        """
-        Converts csv files to pandas dataframe, and converts the dataframe to dictionary
-
-        Args:
-            company_name (str): Name of the company
-
-        Returns:
-            dict: Dictionary containing the converted data
-        """
-        csv_file_dir = f"{self.path}{company_name}_data.csv"
-        df = pd.read_csv(csv_file_dir, header=0, usecols=["date", "open", "high", "low", "close"])
-        modified_data = df.to_dict("list")
-        return modified_data
+    def process_data(self):
+        companies_data: dict = {}
+        for company in self.companies_list:
+            csv_file: str = f"{self.path}{company}_data.csv"
+            df: pd.DataFrame = pd.read_csv(
+                csv_file, header=0, usecols=["date", "close"]
+            )
+            modified_data: dict = df.to_dict("list")
+            companies_data[company] = modified_data
+        self.data = pd.DataFrame(companies_data)
+        return self.data

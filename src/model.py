@@ -3,7 +3,7 @@ import csv
 
 
 class Model:
-
+    """Processes data and returns data in required format"""
     def __init__(self, parent=None):
         super().__init__()
         self.company_list = None
@@ -11,7 +11,12 @@ class Model:
         self.path: str = "../individual_stocks_5yr/"
         self.generate_company_list()
 
-    def generate_company_list(self):
+    def generate_company_list(self) -> list:
+        """
+        Returns a list of companies.
+
+        :return: (list) A list of companies.
+        """
         self.company_list: list = []
         expected_headers = ["date", "close"]
         for (dirpath, dirnames, filenames) in walk(self.path):
@@ -23,12 +28,12 @@ class Model:
         self.company_list.sort()
         return self.company_list
 
-    def check_headers_and_data(self, filename, expected_headers):
+    def check_headers_and_data(self, filename, expected_headers) -> bool:
         """
         Checks if each csv file has the expected headers and at least one data point for each header
-        :param filename: str
-        :param expected_headers: str
-        :return:
+        :param filename: (str) The name of the file being checked
+        :param expected_headers: (list) The list of headers required
+        :return: (bool) The results of the file
         """
         has_expected_headers = False
         has_data = False

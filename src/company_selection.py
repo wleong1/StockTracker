@@ -26,7 +26,8 @@ class CompanySelection(QWidget):
         self.news_display_widget: NewsDisplay = NewsDisplay()
         self.combo_box.currentTextChanged.connect(lambda: self.company_selected())
 
-    def company_selected(self):
+        # Connect the combo box's currentTextChanged signal to update the selected company in the widgets
+    def company_selected(self) -> None:
         """
         If the selected company is not equal to the placeholder text, it will obtain information of the selected company
         , if it is then it will not do anything.

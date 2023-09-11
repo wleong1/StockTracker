@@ -13,7 +13,12 @@ class DataProcessing:
         self.companies_list = Model().company_list
         self.companies_data = self.process_data()
 
-    def process_data(self):
+    def process_data(self) -> pd.DataFrame:
+        """
+        Slices the data as required.
+
+        :return: (DataFrame) A DataFrame containing required information of all companies.
+        """
         companies_data: dict = {}
         for company in self.companies_list:
             csv_file: str = f"{self.path}{company}_data.csv"

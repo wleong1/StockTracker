@@ -18,7 +18,7 @@ class NewsDisplay(QWidget):
         self.company_news_section.setMaximumSize(700, 500)
         self.company_news_section.setFont(QFont("Times", 9))
 
-    def display_company_news(self, company_name: str):
+    def display_company_news(self, company_name: str) -> None:
         """
         Display recent news related to a specific company.
 
@@ -43,7 +43,7 @@ class NewsDisplay(QWidget):
         self.company_news_section.setLayout(self.vbox_news)
 
     @staticmethod
-    def collect_news(company_name: str):
+    def collect_news(company_name: str) -> list:
         """
         Collect recent news articles related to a specific company and format them.
 

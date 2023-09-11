@@ -25,10 +25,11 @@ class GraphPlotting(QWidget):
         self.placeholder_graph()
         self.data_processor = DataProcessing()
 
-    def placeholder_graph(self):
+    def placeholder_graph(self) -> None:
         """
-        Creates a placeholder graph using Bokeh
-        :return:
+        Creates a placeholder graph using Bokeh.
+
+        :return: None
         """
         p = figure()
         p.line([1, 2, 3, 4, 5], [5, 4, 3, 2, 1])
@@ -44,6 +45,12 @@ class GraphPlotting(QWidget):
 
     @staticmethod
     def plotting_data(filename: dict) -> str:
+        """
+        Obtains the data of the selected company.
+
+        :param filename: (dict) Data of the selected company.
+        :return: (str) Html code for graph plotting.
+        """
         dates: np.ndarray = np.array(filename["date"], dtype=np.datetime64)
         source: ColumnDataSource = ColumnDataSource(data=dict(date=dates, close=filename["close"]))
         p = figure(height=PLOT_HEIGHT, width=PLOT_WIDTH, tools="xpan, hover", toolbar_location=None,
@@ -57,7 +64,13 @@ class GraphPlotting(QWidget):
 
         return html
 
-    def plot_selected_graph(self, company_name: str):
+    def plot_selected_graph(self, company_name: str) -> None:
+        """
+        Plots selected company.
+
+        :param company_name: (str) The name of the selected company
+        :return: None
+        """
         data: dict = self.data_processor.companies_data[company_name].to_dict()
         html = self.plotting_data(data)
 

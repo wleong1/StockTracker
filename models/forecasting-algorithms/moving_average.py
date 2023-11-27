@@ -1,32 +1,40 @@
+from parameters import mongodb_connection
+from pymongo import MongoClient
+
+
 class MovingAverage:
 
-    def __init__(self) -> None:
-        self.dataset = [27, 31, 29, 30, 32, 34, 36, 35, 37, 39, 40, 42]
-        self.window_size = [window for window in range(1, 7)]
+    def __init__(self, company) -> None:
+        client = MongoClient(mongodb_connection)
+        database = client.StockTracker
+        collection = database.Companies
+        projection = {"_id": 1, "price": 1}
+        cursor = collection.find({"_id": company}, projection)
+        for doc in cursor:
+            all_points = doc["price"]
+        self.dataset = [float(closing_price["close"]) for closing_price in all_points]
+        self.window_size = [window for window in range(10, 1000)]
         self.smoothing_factor = [smoothing_factor / 10 for smoothing_factor in range(1, 10)]
         self.sma_results = {}
         self.sma_predictions = []
         self.ema_results = {}
         self.ema_predictions = []
+        self.best_results = {"algo": None, "MSE": float("inf"), "window": None, "smoothing_factor": None}
     
     def simple_moving_average(self, window):
         dataset_length = len(self.dataset)
         total_squared_error = 0
         total_average_error = 0
         start, end = 0, window
-        # curr_sum = sum([data["close"] for data in self.dataset[:end]])
         curr_sum = sum(self.dataset[:end])
-        # actual_data = self.dataset[end]["close"]
         actual_data = self.dataset[end]
         curr_average_error = actual_data - curr_sum / window
         total_average_error += abs(curr_average_error)
         curr_squared_error = curr_average_error ** 2
-        # print(curr_average_error)
         total_squared_error += curr_squared_error
         for end in range(window + 1, dataset_length):
             curr_sum = curr_sum + self.dataset[end - 1] - self.dataset[start]
             start += 1
-            # actual_data = self.dataset[end]["close"]
             actual_data = self.dataset[end]
             curr_average_error = actual_data - curr_sum / window
             total_average_error += abs(curr_average_error)
@@ -40,6 +48,11 @@ class MovingAverage:
             "mean_squared_error": mean_squared_error, 
             "root_mean_squared_error": root_mean_squared_error
             }
+        if mean_squared_error < self.best_results["MSE"]:
+            self.best_results["algo"] = "sma"
+            self.best_results["MSE"] = mean_squared_error
+            self.best_results["window"] = window
+            self.best_results["smoothing_factor"] = None
         return (curr_sum + self.dataset[end] - self.dataset[start]) / window
 
     def exponential_moving_average(self, smoothing_factor):
@@ -75,6 +88,11 @@ class MovingAverage:
             "mean_squared_error": mean_squared_error, 
             "root_mean_squared_error": root_mean_squared_error
             }
+        if mean_squared_error < self.best_results["MSE"]:
+            self.best_results["algo"] = "ema"
+            self.best_results["MSE"] = mean_squared_error
+            self.best_results["window"] = None
+            self.best_results["smoothing_factor"] = smoothing_factor
         return smoothing_factor * second_data + (1 - smoothing_factor) * first_data
 
     def run_forecast(self):
@@ -87,3 +105,7 @@ class MovingAverage:
             self.ema_predictions.append(predicted_value)
 
         return self.sma_results, self.sma_predictions, self.ema_results, self.ema_predictions
+    
+a = MovingAverage("AAPL")
+a.run_forecast()
+print(a.best_results)

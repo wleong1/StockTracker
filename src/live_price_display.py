@@ -53,8 +53,6 @@ class LivePriceDisplay(QWidget):
             self.price: str = "Error fetching price"
 
         self.share_price_label.setText(f"{company_name}:\n{self.price}")
-<<<<<<< HEAD
-=======
 
 from pymongo import MongoClient
 client = MongoClient(mongodb_connection)
@@ -77,4 +75,3 @@ for symbol in symbols:
     company = {"_id": symbol, "price":[{"date": b, "close": a["Time Series (Daily)"][b]["4. close"]} for b in a["Time Series (Daily)"]]}
     result = collection.insert_one(company)
     print(f"Inserted document ID: {result.inserted_id}")
->>>>>>> a55d65f (Removed parameters)

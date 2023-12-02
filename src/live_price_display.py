@@ -3,13 +3,8 @@ from PyQt5.QtGui import QFont
 from PyQt5 import QtCore
 import requests
 
-<<<<<<< HEAD
-from data_processing import DataProcessing
-from parameters import ALPHA_VANTAGE_API_KEY
-=======
 from processing.data_processing import DataProcessing
 from parameters import ALPHA_VANTAGE_API_KEY, mongodb_connection
->>>>>>> a55d65f (Removed parameters)
 
 ALPHA_VANTAGE_ENDPOINT = "https://www.alphavantage.co/query"
 

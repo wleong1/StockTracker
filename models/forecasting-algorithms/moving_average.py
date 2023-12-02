@@ -1,5 +1,8 @@
 from parameters import mongodb_connection
 from pymongo import MongoClient
+import pandas as pd
+import numpy as np
+import argparse
 
 
 class MovingAverage:
@@ -19,93 +22,97 @@ class MovingAverage:
         self.sma_predictions = []
         self.ema_results = {}
         self.ema_predictions = []
-        self.best_results = {"algo": None, "MSE": float("inf"), "window": None, "smoothing_factor": None}
-    
+        self.best_results = {"algo": None, "MAPE": float("inf"), "window": None, "smoothing_factor": None}
+        self.mape = float("inf")
+
     def simple_moving_average(self, window):
         dataset_length = len(self.dataset)
-        total_squared_error = 0
-        total_average_error = 0
         start, end = 0, window
         curr_sum = sum(self.dataset[:end])
+        actual_dataset, forecasted_dataset = [], []
         actual_data = self.dataset[end]
-        curr_average_error = actual_data - curr_sum / window
-        total_average_error += abs(curr_average_error)
-        curr_squared_error = curr_average_error ** 2
-        total_squared_error += curr_squared_error
+        actual_dataset.append(actual_data)
+        forecasted_data = curr_sum / window
+        forecasted_dataset.append(forecasted_data)
+        # total_percentage_error = (abs(forecasted_data - actual_data) / actual_data) * 100
         for end in range(window + 1, dataset_length):
             curr_sum = curr_sum + self.dataset[end - 1] - self.dataset[start]
             start += 1
             actual_data = self.dataset[end]
-            curr_average_error = actual_data - curr_sum / window
-            total_average_error += abs(curr_average_error)
-            curr_squared_error = curr_average_error ** 2
-            total_squared_error += curr_squared_error
-        mean_absolute_error = total_average_error / (dataset_length - window)
-        mean_squared_error = total_squared_error / (dataset_length - window)
-        root_mean_squared_error = mean_squared_error ** 0.5
+            actual_dataset.append(actual_data)
+            forecasted_data = curr_sum / window
+            forecasted_dataset.append(forecasted_data)
+            # total_percentage_error += (abs(forecasted_data - actual_data) / actual_data) * 100
+        number_of_forecasts = dataset_length - window
+        # MAPE = total_percentage_error / number_of_forecasts
+        actual_dataset = pd.Series(actual_dataset)
+        forecasted_dataset = pd.Series(forecasted_dataset)
+        curr_mape = np.mean(np.abs(forecasted_dataset - actual_dataset)/np.abs(actual_dataset)) * 100
         self.sma_results[window] = {
-            "mean_absolute_error": mean_absolute_error, 
-            "mean_squared_error": mean_squared_error, 
-            "root_mean_squared_error": root_mean_squared_error
+            "MAPE": curr_mape
+            # "MAPE": MAPE
             }
-        if mean_squared_error < self.best_results["MSE"]:
+
+        # if self.mape < self.best_results["MAPE"]:
+        if curr_mape < self.best_results["MAPE"]:
             self.best_results["algo"] = "sma"
-            self.best_results["MSE"] = mean_squared_error
+            # self.best_results["MAPE"] = MAPE
+            self.best_results["MAPE"] = curr_mape
             self.best_results["window"] = window
             self.best_results["smoothing_factor"] = None
         return (curr_sum + self.dataset[end] - self.dataset[start]) / window
 
     def exponential_moving_average(self, smoothing_factor):
         dataset_length = len(self.dataset)
-        total_squared_error = 0
-        total_error = 0
-        # first_data = self.dataset[0]["close"]
+        total_percentage_error = 0
         first_data = self.dataset[0]
-        # second_data = self.dataset[1]["close"]
         second_data = self.dataset[1]
+        actual_dataset, forecasted_dataset = [], []
+        actual_dataset.append(second_data)
+        forecasted_dataset.append(first_data)
         curr_error = second_data - first_data
-        total_error += abs(curr_error)
-        curr_squared_error = curr_error ** 2
-        # print(curr_error)
-        total_squared_error += curr_squared_error
+        total_percentage_error += (abs(curr_error) / second_data) * 100
         for end in range(2, dataset_length):
-            predicted_value = smoothing_factor * second_data + (1 - smoothing_factor) * first_data
-            # print(f"predicted: {predicted_value}")
-            # actual_data = self.dataset[end]["close"]
+            forecasted_value = smoothing_factor * second_data + (1 - smoothing_factor) * first_data
             actual_data = self.dataset[end]
-            curr_error = actual_data - predicted_value
-            total_error += abs(curr_error)
-            curr_squared_error = curr_error ** 2
-            # print(curr_error)
-            total_squared_error += curr_squared_error
-            first_data = predicted_value
+            actual_dataset.append(actual_data)
+            forecasted_dataset.append(forecasted_value)
+            curr_error = forecasted_value - actual_data
+            total_percentage_error += (abs(curr_error) / actual_data) * 100
+            first_data = forecasted_value
             second_data = actual_data
-        mean_absolute_error = total_error / (dataset_length - 1)
-        mean_squared_error = total_squared_error / (dataset_length - 1)
-        root_mean_squared_error = mean_squared_error ** 0.5
+        actual_dataset = pd.Series(actual_dataset)
+        forecasted_dataset = pd.Series(forecasted_dataset)
+        curr_mape = np.mean(np.abs(forecasted_dataset - actual_dataset)/np.abs(actual_dataset)) * 100
+        # MAPE = total_percentage_error / (dataset_length - 1)
         self.ema_results[smoothing_factor] = {
-            "mean_absolute_error": mean_absolute_error, 
-            "mean_squared_error": mean_squared_error, 
-            "root_mean_squared_error": root_mean_squared_error
+            # "MAPE": MAPE
+            "MAPE": curr_mape
             }
-        if mean_squared_error < self.best_results["MSE"]:
+        # if MAPE < self.best_results["MAPE"]:
+        if curr_mape < self.best_results["MAPE"]:
             self.best_results["algo"] = "ema"
-            self.best_results["MSE"] = mean_squared_error
+            # self.best_results["MAPE"] = MAPE
+            self.best_results["MAPE"] = curr_mape
             self.best_results["window"] = None
             self.best_results["smoothing_factor"] = smoothing_factor
         return smoothing_factor * second_data + (1 - smoothing_factor) * first_data
 
     def run_forecast(self):
         for window in self.window_size:
-            predicted_value = self.simple_moving_average(window)
-            self.sma_predictions.append(predicted_value)
+            forecasted_value = self.simple_moving_average(window)
+            self.sma_predictions.append(forecasted_value)
         
         for smoothing_factor in self.smoothing_factor:
-            predicted_value = self.exponential_moving_average(smoothing_factor)
-            self.ema_predictions.append(predicted_value)
+            forecasted_value = self.exponential_moving_average(smoothing_factor)
+            self.ema_predictions.append(forecasted_value)
 
         return self.sma_results, self.sma_predictions, self.ema_results, self.ema_predictions
     
-a = MovingAverage("AAPL")
-a.run_forecast()
-print(a.best_results)
+    
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Finding Mean Absolute Percentage Error using two different moving averages')
+    parser.add_argument('company_name', help='Provide company name to analyse')
+    args = parser.parse_args()
+    ma = MovingAverage(args.company_name)
+    ma.run_forecast()

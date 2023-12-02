@@ -1,5 +1,5 @@
 import pandas as pd
-from model import Model
+from models import Model
 
 
 class DataProcessing:

@@ -34,7 +34,6 @@ class MovingAverage:
         actual_dataset.append(actual_data)
         forecasted_data = curr_sum / window
         forecasted_dataset.append(forecasted_data)
-        # total_percentage_error = (abs(forecasted_data - actual_data) / actual_data) * 100
         for end in range(window + 1, dataset_length):
             curr_sum = curr_sum + self.dataset[end - 1] - self.dataset[start]
             start += 1
@@ -42,21 +41,14 @@ class MovingAverage:
             actual_dataset.append(actual_data)
             forecasted_data = curr_sum / window
             forecasted_dataset.append(forecasted_data)
-            # total_percentage_error += (abs(forecasted_data - actual_data) / actual_data) * 100
-        number_of_forecasts = dataset_length - window
-        # MAPE = total_percentage_error / number_of_forecasts
         actual_dataset = pd.Series(actual_dataset)
         forecasted_dataset = pd.Series(forecasted_dataset)
         curr_mape = np.mean(np.abs(forecasted_dataset - actual_dataset)/np.abs(actual_dataset)) * 100
         self.sma_results[window] = {
             "MAPE": curr_mape
-            # "MAPE": MAPE
             }
-
-        # if self.mape < self.best_results["MAPE"]:
         if curr_mape < self.best_results["MAPE"]:
             self.best_results["algo"] = "sma"
-            # self.best_results["MAPE"] = MAPE
             self.best_results["MAPE"] = curr_mape
             self.best_results["window"] = window
             self.best_results["smoothing_factor"] = None
@@ -84,15 +76,11 @@ class MovingAverage:
         actual_dataset = pd.Series(actual_dataset)
         forecasted_dataset = pd.Series(forecasted_dataset)
         curr_mape = np.mean(np.abs(forecasted_dataset - actual_dataset)/np.abs(actual_dataset)) * 100
-        # MAPE = total_percentage_error / (dataset_length - 1)
         self.ema_results[smoothing_factor] = {
-            # "MAPE": MAPE
             "MAPE": curr_mape
             }
-        # if MAPE < self.best_results["MAPE"]:
         if curr_mape < self.best_results["MAPE"]:
             self.best_results["algo"] = "ema"
-            # self.best_results["MAPE"] = MAPE
             self.best_results["MAPE"] = curr_mape
             self.best_results["window"] = None
             self.best_results["smoothing_factor"] = smoothing_factor

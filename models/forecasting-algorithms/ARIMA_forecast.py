@@ -78,7 +78,7 @@ class ARIMAForecast:
             forecast_length = len(curr_goal_sliced_data)
             forecasted_values_manual = pd.Series(model_manual.forecast(forecast_length), index=self.df.close[curr_end_idx:curr_goal_idx:-1].index)
             actual_values = self.df.close[curr_end_idx:curr_goal_idx:-1]
-            Mean_Average_Percentage_Error_manual = np.mean(np.abs(forecasted_values_manual - actual_values)/np.abs(actual_values)) * 100
+            Mean_Absolute_Percentage_Error_manual = np.mean(np.abs(forecasted_values_manual - actual_values)/np.abs(actual_values)) * 100
 
             model_auto = pm.auto_arima(curr_end_sliced_data.close, seasonal=True, m=12)
             (p_auto, d_auto, q_auto) = model_auto.get_params()["order"]
@@ -87,9 +87,9 @@ class ARIMAForecast:
             forecast_length = len(curr_goal_sliced_data)
             forecasted_values_auto = pd.Series(model_auto.forecast(forecast_length), index=self.df.close[curr_end_idx:curr_goal_idx:-1].index)
             actual_values = self.df.close[curr_end_idx:curr_goal_idx:-1]
-            Mean_Average_Percentage_Error_auto = np.mean(np.abs(forecasted_values_auto - actual_values)/np.abs(actual_values)) * 100
+            Mean_Absolute_Percentage_Error_auto = np.mean(np.abs(forecasted_values_auto - actual_values)/np.abs(actual_values)) * 100
 
-            return Mean_Average_Percentage_Error_manual, Mean_Average_Percentage_Error_auto     
+            return Mean_Absolute_Percentage_Error_manual, Mean_Absolute_Percentage_Error_auto     
         except ValueError as e:
             return None, None
     
@@ -117,7 +117,7 @@ class ARIMAForecast:
                                     index=sliced_data.close[train_value_index:].index)
         actual_values = sliced_data.close[train_value_index:]
 
-        Mean_Average_Percentage_Error_manual = np.mean(np.abs(forecasted_values_manual - actual_values)/np.abs(actual_values)) * 100
+        Mean_Absolute_Percentage_Error_manual = np.mean(np.abs(forecasted_values_manual - actual_values)/np.abs(actual_values)) * 100
 
         model_auto = pm.auto_arima(sliced_data.close, seasonal=True, m=12)
         (p_auto, d_auto, q_auto) = model_auto.get_params()["order"]
@@ -126,13 +126,17 @@ class ARIMAForecast:
         forecasted_values_auto = pd.Series(model_auto.forecast(len(sliced_data) - train_value_index),
                                     index=sliced_data.close[train_value_index:].index)
         actual_values = self.df.close[train_value_index:]
-        Mean_Average_Percentage_Error_auto = np.mean(np.abs(forecasted_values_auto - actual_values)/np.abs(actual_values)) * 100
+        Mean_Absolute_Percentage_Error_auto = np.mean(np.abs(forecasted_values_auto - actual_values)/np.abs(actual_values)) * 100
 
-        return Mean_Average_Percentage_Error_manual, Mean_Average_Percentage_Error_auto
+        return Mean_Absolute_Percentage_Error_manual, Mean_Absolute_Percentage_Error_auto
     
     def generate_mape(self, start_date, slice_window, prediction_length, backwards_duration):
         dates = []
         dates.append(start_date)
+        slice_window = eval(slice_window)
+        prediction_length = eval(prediction_length)
+        backwards_duration = eval(backwards_duration)
+        manual_series, auto_series, mape_manual, mape_auto = None, None, None, None
         slice_final_date = self.find_nearest_date(slice_window, start_date, "forwards")[1]
         slice_window_manual_mape_list, slice_window_auto_mape_list = [], []
         manual_result, auto_result = self.window_slice_optimisation(dates[-1])
@@ -174,9 +178,9 @@ class ARIMAForecast:
 if __name__ == "__main__":
     af = ARIMAForecast()
 
-    parser = argparse.ArgumentParser(description='Finding Mean Absolute Percentage Error using two different methods')
+    parser = argparse.ArgumentParser(description='Finding Mean Absolute Percentage Error using two different ARIMA methods')
     parser.add_argument('start_date', help='Provide date to start the slice, ensure date has data')
-    parser.add_argument('slice_window', help='The window size of the slice used for analysis')
+    parser.add_argument('slice_window', help='The window size of the slice used for analysis, in days')
     parser.add_argument('prediction_length', help='The number of data points to be predicted')
     parser.add_argument('backwards_duration', help='How far back would the first data be, in days')
     args = parser.parse_args()

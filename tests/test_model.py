@@ -1,5 +1,5 @@
 import unittest
-from src import model
+from models import model
 
 class MyModelTestCase(unittest.TestCase):
 
@@ -13,7 +13,7 @@ class MyModelTestCase(unittest.TestCase):
         :return: None
         """
         model_test = model.Model()
-        model_test.path = "sample_data/"
+        model_test.path = "tests/sample_data/"
         company_list = model_test.generate_company_list()
 
         self.assertEqual(company_list, ["CompanyA", "CompanyB", "CompanyC", "CompanyD"])

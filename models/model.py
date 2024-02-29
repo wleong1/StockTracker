@@ -1,5 +1,7 @@
 from os import walk
 import csv
+import os, sys
+sys.path.append(os.getcwd())
 
 
 class Model:
@@ -8,7 +10,7 @@ class Model:
         super().__init__()
         self.company_list = None
         self.parent = parent
-        self.path: str = "../individual_stocks_5yr/"
+        self.path: str = "/home/wleong/Personal_project/StockTracker/individual_stocks_5yr/" # This is relative from where you run the script, not where this script is
         self.generate_company_list()
 
     def generate_company_list(self) -> list:

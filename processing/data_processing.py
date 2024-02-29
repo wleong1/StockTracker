@@ -1,5 +1,5 @@
 import pandas as pd
-from models import Model
+from models.model import Model
 
 
 class DataProcessing:
@@ -9,7 +9,7 @@ class DataProcessing:
         super().__init__()
         self.data = None
         self.parent = parent
-        self.path: str = "../individual_stocks_5yr/"
+        self.path: str = "/home/wleong/Personal_project/StockTracker/individual_stocks_5yr/"
         self.companies_list = Model().company_list
         self.companies_data = self.process_data()
 
@@ -25,6 +25,9 @@ class DataProcessing:
             df: pd.DataFrame = pd.read_csv(
                 csv_file, header=0, usecols=["date", "close"]
             )
+            df["date"] = pd.to_datetime(df["date"])
+            df['date'] = df['date'].dt.strftime('%Y-%m-%d')
+            df["close"] = pd.to_numeric(df["close"])
             modified_data: dict = df.to_dict("list")
             companies_data[company] = modified_data
         self.data = pd.DataFrame(companies_data)

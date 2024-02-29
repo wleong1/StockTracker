@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QWidget, QComboBox
 from graph_plotting import GraphPlotting
 from live_price_display import LivePriceDisplay
 from news_display import NewsDisplay
-from model import Model
+from models.model import Model
 
 class CompanySelection(QWidget):
     """Displays and handles company selection menu"""

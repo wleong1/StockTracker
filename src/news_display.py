@@ -1,5 +1,3 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QLabel
-from PyQt5.QtGui import QFont
 import requests
 
 from src.parameters import NEWS_API_KEY
@@ -14,7 +12,7 @@ class NewsDisplay:
         super().__init__()
         self.parent = parent
 
-    def collect_news(self, company_name: str) -> list:
+    def _collect_news(self, company_name: str) -> list:
         """
         Collect recent news articles related to a specific company and format them.
 
@@ -29,15 +27,16 @@ class NewsDisplay:
         news_response: requests.models.Response = requests.get(NEWS_ENDPOINT, params=news_params)
         articles: list = news_response.json()["articles"]
         five_articles: list = articles[:5]
-        return self.format_news_django(five_articles)
+        return five_articles
     
-    def format_news_pyqt(self, articles):
+    def format_news_pyqt(self, company_name):
         # Generate formatted headlines with clickable URLs
+        news = self._collect_news(company_name)
         return [
             f"{article['title']}: '<a href=\"{article['url']}\">'{article['url']}'</a>'"
-            for article in articles
+            for article in news
         ]
     
-    def format_news_django(self, articles):
-        return [{"title":article["title"], "url":article["url"]} for article in articles]
-
+    def format_news_django(self, company_name):
+        news = self._collect_news(company_name)
+        return [{"title":article["title"], "url":article["url"]} for article in news]

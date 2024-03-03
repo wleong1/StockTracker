@@ -4,7 +4,8 @@ from PyQt5 import QtCore
 import requests
 import yfinance as yf
 
-from processing.data_processing import DataProcessing
+
+from src.data_processing import DataProcessing
 from src.parameters import ALPHA_VANTAGE_API_KEY, mongodb_connection
 
 ALPHA_VANTAGE_ENDPOINT = "https://www.alphavantage.co/query"
@@ -40,10 +41,10 @@ class LivePriceDisplay:
                 if "Time Series (Daily)" in response_data:
                     price_list: dict = response_data["Time Series (Daily)"]
                     most_recent_day: str = next(iter(price_list))
-                    self.price: float = price_list[most_recent_day]["4. close"]
+                    return price_list[most_recent_day]["4. close"]
 
         except (requests.RequestException, KeyError, IndexError):
-            self.price: str = "Error fetching price"
+            raise
 
     
     def display_final_price_yf(self, company_name: str) -> None:
@@ -59,7 +60,7 @@ class LivePriceDisplay:
             price = df.iloc[-1]["Close"]
             return round(price, 5)
         except IndexError:
-            return "N/A"
+            return "Error fetching price"
 
 # from pymongo import MongoClient
 # client = MongoClient(mongodb_connection)

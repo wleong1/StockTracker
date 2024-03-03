@@ -71,7 +71,6 @@ class LivePriceDisplay:
         except IndexError:
             return "Error fetching price"
 
-
 # from pymongo import MongoClient
 # client = MongoClient(mongodb_connection)
 # database = client.StockTracker

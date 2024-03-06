@@ -1,66 +1,76 @@
-from PyQt5.QtWidgets import QWidget, QLabel
-from PyQt5.QtGui import QFont
-from PyQt5 import QtCore
+"""This module returns the most recent price of the selected company."""
+
+from typing import Union, Any
 import requests
-import yfinance as yf
+import yfinance as yf  # type: ignore[import-untyped] # pylint: disable=E0401
+import pandas as pd
 
-
-from src.data_processing import DataProcessing
-from src.parameters import ALPHA_VANTAGE_API_KEY, mongodb_connection
+from src.parameters import ALPHA_VANTAGE_API_KEY
 
 ALPHA_VANTAGE_ENDPOINT = "https://www.alphavantage.co/query"
 
 
 class LivePriceDisplay:
-    """Shows the live prices"""
+    """
+    Returns the most recent price of the selected company.
+    """
 
-    def __init__(self, parent=None):
-        super().__init__()
-        self.price = None
-        self.parent = parent
-
-
-    def display_final_price_av(self, company_name: str) -> None:
+    @staticmethod
+    def display_final_price_av(company_name: str) -> Union[str, dict, Any]:
         """
-        Attempts to display the final price of the selected company.
+        Returns a the price using Alpha Vantage.
 
-        :param company_name: (str) The name of the name to display the final price for.
-        :return:
+        Args:
+            company_name: The ticker symbol of the company
+
+        Returns:
+            The most recent price in string
         """
-
         try:
             # Gets last available price by default
             price_params: dict = {
                 "apikey": ALPHA_VANTAGE_API_KEY,
                 "function": "TIME_SERIES_DAILY",
-                "symbol": company_name
+                "symbol": company_name,
             }
-            price_response: requests.models.Response = requests.get(ALPHA_VANTAGE_ENDPOINT, params=price_params)
+            price_response: requests.models.Response = requests.get(
+                ALPHA_VANTAGE_ENDPOINT, params=price_params
+            )
             if price_response.ok:
                 response_data: dict = price_response.json()
                 if "Time Series (Daily)" in response_data:
                     price_list: dict = response_data["Time Series (Daily)"]
                     most_recent_day: str = next(iter(price_list))
                     return price_list[most_recent_day]["4. close"]
+                return response_data
+            return price_response
 
-        except (requests.RequestException, KeyError, IndexError):
-            raise
+        except (
+            requests.exceptions.MissingSchema,
+            requests.RequestException,
+            KeyError,
+            IndexError,
+        ):
+            return "Error fetching price"
 
-    
-    def display_final_price_yf(self, company_name: str) -> None:
+    @staticmethod
+    def display_final_price_yf(company_name: str) -> Union[float, str]:
         """
-        Attempts to display the final price of the selected company.
+        Returns a the price using Yahoo Finance.
 
-        :param company_name: (str) The name of the name to display the final price for.
-        :return:
+        Args:
+            company_name: The ticker symbol of the company
+
+        Returns:
+            The most recent price in string
         """
-
         try:
-            df = yf.download(company_name)
-            price = df.iloc[-1]["Close"]
+            df: pd.DataFrame = yf.download(company_name)  # pylint: disable=C0103
+            price: float = df.iloc[-1]["Close"]
             return round(price, 5)
         except IndexError:
             return "Error fetching price"
+
 
 # from pymongo import MongoClient
 # client = MongoClient(mongodb_connection)
@@ -80,6 +90,6 @@ class LivePriceDisplay:
 #         "outputsize": "full"
 #     }
 #     a = requests.get(ALPHA_VANTAGE_ENDPOINT, params=price_params).json()
-#     company = {"_id": symbol, "price":[{"date": b, "close": a["Time Series (Daily)"][b]["4. close"]} for b in a["Time Series (Daily)"]]}
+#     company = {"_id": symbol, "price":[{"date": b, "close": a["Time Series (Daily)"][b]["4. close"]} for b in a["Time Series (Daily)"]]} # pylint: disable=C0301
 #     result = collection.insert_one(company)
 #     print(f"Inserted document ID: {result.inserted_id}")

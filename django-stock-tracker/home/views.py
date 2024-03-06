@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 import sys, json
-sys.path.append("/home/wleong/Personal_project/StockTracker/")
+sys.path.append("/usr/workspace/")
+sys.path.append("/home/wleong/Personal_project/StockTracker")
 from src.model import Model
 from src.data_processing import DataProcessing
 from src.live_price_display import LivePriceDisplay

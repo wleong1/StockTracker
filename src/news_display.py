@@ -2,7 +2,7 @@
 
 import requests
 
-from src.parameters import NEWS_API_KEY # type: ignore[import-untyped] # pylint: disable=E0401, E0611
+from src.parameters import NEWS_API_KEY  # type: ignore[import-not-found] # type: ignore[import-untyped] # pylint: disable=E0401, E0611, C0301
 
 NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
 
@@ -25,8 +25,7 @@ class NewsDisplay:
         news_params: dict = {"apiKey": NEWS_API_KEY, "qInTitle": company_name}
 
         news_response: requests.models.Response = requests.get(
-            NEWS_ENDPOINT, params=news_params,
-            timeout=20
+            NEWS_ENDPOINT, params=news_params, timeout=20
         )
         articles: list = news_response.json()["articles"]
         five_articles: list = articles[:5]

@@ -25,7 +25,8 @@ class NewsDisplay:
         news_params: dict = {"apiKey": NEWS_API_KEY, "qInTitle": company_name}
 
         news_response: requests.models.Response = requests.get(
-            NEWS_ENDPOINT, params=news_params
+            NEWS_ENDPOINT, params=news_params,
+            timeout=20
         )
         articles: list = news_response.json()["articles"]
         five_articles: list = articles[:5]

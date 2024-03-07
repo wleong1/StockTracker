@@ -39,7 +39,6 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install mypy
-          mypy src --install-types
       - name: mypy
         run: |
           mypy src/
@@ -71,7 +70,7 @@ jobs:
           python-version: 3.x
       - name: Install Dependencies
         run: |
-          pip install pytest requests pandas
+          pip install pytest requests pandas yfinance
       - name: pytest
         run: |
           pytest tests/

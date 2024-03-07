@@ -34,7 +34,8 @@ class LivePriceDisplay:
                 "symbol": company_name,
             }
             price_response: requests.models.Response = requests.get(
-                ALPHA_VANTAGE_ENDPOINT, params=price_params
+                ALPHA_VANTAGE_ENDPOINT, params=price_params,
+                timeout=20
             )
             if price_response.ok:
                 response_data: dict = price_response.json()

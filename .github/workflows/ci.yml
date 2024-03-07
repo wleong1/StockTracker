@@ -28,7 +28,6 @@ jobs:
       - run: mkdocs gh-deploy --force
 
   mypy:
-    needs: build
     runs-on: ubuntu-latest
     name: Mypy
     steps:
@@ -45,7 +44,6 @@ jobs:
           mypy src/
 
   pylint:
-    needs: build
     runs-on: ubuntu-latest
     name: pylint
     steps:
@@ -62,7 +60,6 @@ jobs:
           pylint src/
 
   pytest:
-    needs: build
     runs-on: ubuntu-latest
     name: pytest
     steps:

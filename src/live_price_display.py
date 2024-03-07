@@ -2,7 +2,7 @@
 
 from typing import Union, Any
 import requests
-import yfinance as yf  # type: ignore[import-untyped] # pylint: disable=E0401
+import yfinance as yf  # type: ignore[import-not-found] # type: ignore[import-untyped] # pylint: disable=E0401
 import pandas as pd
 
 from src.parameters import ALPHA_VANTAGE_API_KEY  # type: ignore[import-not-found] # pylint: disable=E0401, E0611

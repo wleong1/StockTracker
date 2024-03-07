@@ -22,10 +22,6 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run tests
-        run: |
-          python tests.py  # Replace with the command to run your tests
-
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -48,6 +44,7 @@ jobs:
       - run: mkdocs gh-deploy --force
 
   mypy:
+    needs: build
     runs-on: ubuntu-latest
     name: Mypy
     steps:
@@ -65,6 +62,7 @@ jobs:
           mypy src/
 
   pylint:
+    needs: build
     runs-on: ubuntu-latest
     name: pylint
     steps:
@@ -81,6 +79,7 @@ jobs:
           pylint src/
 
   pytest:
+    needs: build
     runs-on: ubuntu-latest
     name: pytest
     steps:

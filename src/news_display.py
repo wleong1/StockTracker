@@ -2,7 +2,7 @@
 
 import requests
 
-from src.parameters import NEWS_API_KEY  # type: ignore[import-not-found] # type: ignore[import-untyped] # pylint: disable=E0401, E0611, C0301
+from src.parameters import NEWS_API_KEY  # type: ignore[attr-defined]
 
 NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
 

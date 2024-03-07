@@ -2,10 +2,10 @@
 
 from typing import Union, Any
 import requests
-import yfinance as yf  # type: ignore[import-untyped] # pylint: disable=E0401
+import yfinance as yf # type: ignore[import-untyped] # pylint: disable=E0401
 import pandas as pd
 
-from src.parameters import ALPHA_VANTAGE_API_KEY
+from src.parameters import ALPHA_VANTAGE_API_KEY # type: ignore[import-not-found] # pylint: disable=E0611
 
 ALPHA_VANTAGE_ENDPOINT = "https://www.alphavantage.co/query"
 

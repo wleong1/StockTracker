@@ -6,11 +6,30 @@ on:
 permissions:
   contents: write
 jobs:
+  build:
+      runs-on: ubuntu-latest
+
+      steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run tests
+        run: |
+          python tests.py  # Replace with the command to run your tests
+
   deploy:
-    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v2
       - name: Configure Git Credentials
         run: |
           git config user.name github-actions[bot]
@@ -32,14 +51,15 @@ jobs:
     runs-on: ubuntu-latest
     name: Mypy
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python 3.x
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - name: Install Dependencies
         run: |
           pip install mypy
+          mypy --install-types
       - name: mypy
         run: |
           mypy src/
@@ -48,9 +68,9 @@ jobs:
     runs-on: ubuntu-latest
     name: pylint
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python 3.x
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - name: Install Dependencies
@@ -64,9 +84,9 @@ jobs:
     runs-on: ubuntu-latest
     name: pytest
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v2
       - name: Set up Python 3.x
-        uses: actions/setup-python@v1
+        uses: actions/setup-python@v2
         with:
           python-version: 3.x
       - name: Install Dependencies

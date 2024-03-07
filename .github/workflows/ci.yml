@@ -6,22 +6,6 @@ on:
 permissions:
   contents: write
 jobs:
-  build:
-      runs-on: ubuntu-latest
-
-      steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.x
-
-      - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
-
   deploy:
     runs-on: ubuntu-latest
     steps:
@@ -56,7 +40,7 @@ jobs:
       - name: Install Dependencies
         run: |
           pip install mypy
-          mypy --install-types
+          mypy src --install-types
       - name: mypy
         run: |
           mypy src/
@@ -73,7 +57,7 @@ jobs:
           python-version: 3.x
       - name: Install Dependencies
         run: |
-          pip install pylint
+          pip install pylint requests pandas
       - name: pylint
         run: |
           pylint src/
@@ -90,7 +74,7 @@ jobs:
           python-version: 3.x
       - name: Install Dependencies
         run: |
-          pip install pytest
+          pip install pytest requests pandas
       - name: pytest
         run: |
           pytest tests/

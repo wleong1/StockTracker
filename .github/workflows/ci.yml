@@ -38,7 +38,7 @@ jobs:
           python-version: 3.x
       - name: Install Dependencies
         run: |
-          pip install mypy types-request pandas-stubs requests
+          pip install mypy requests types-request pandas-stubs
       - name: mypy
         run: |
           mypy src/

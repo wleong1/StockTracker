@@ -1,66 +1,59 @@
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QGroupBox, QLabel
-from PyQt5.QtGui import QFont
+"""This module displays the most recent news of the selected company if available"""
+
 import requests
 
-from parameters import NEWS_API_KEY
+from src.parameters import NEWS_API_KEY  # type: ignore[attr-defined]
 
 NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
 
 
-class NewsDisplay(QWidget):
-    """Obtains and handles recent news"""
-
-    def __init__(self, parent=None):
-        super().__init__()
-        self.parent = parent
-        self.vbox_news = QVBoxLayout()
-        self.company_news_section = QGroupBox("Live news")
-        self.company_news_section.setMaximumSize(700, 500)
-        self.company_news_section.setFont(QFont("Times", 9))
-
-    def display_company_news(self, company_name: str) -> None:
-        """
-        Display recent news related to a specific company.
-
-        :param company_name: (str) The name of the company for which news is displayed.
-        :return: None
-        """
-        company_news: list = self.collect_news(company_name=company_name)
-
-        # Remove news from previously selected company, if any
-        while self.vbox_news.count():
-            item = self.vbox_news.takeAt(0)
-            widget = item.widget()
-            if widget is not None:
-                widget.deleteLater()
-
-        # Add news from currently selected company, if any
-        for headline in company_news:
-            news_label = QLabel(headline)
-            news_label.setWordWrap(True)
-            self.vbox_news.addWidget(news_label)
-
-        self.company_news_section.setLayout(self.vbox_news)
+class NewsDisplay:
+    """
+    Returns the most recent news of the selected company, if any.
+    """
 
     @staticmethod
-    def collect_news(company_name: str) -> list:
+    def _collect_news(company_name: str) -> list:
         """
-        Collect recent news articles related to a specific company and format them.
+        Collect recent news articles related to the selected company and format them.
+        Args:
+            company_name: The ticker symbol of the company
 
-        :param company_name: (str) The name of the company to collect news for.
-        :return: (list) A list of formatted news headlines with respective URLs.
+        Returns:
+            five_article: The most recent five articles
         """
-        news_params: dict = {
-            "apiKey": NEWS_API_KEY,
-            "qInTitle": company_name
-        }
+        news_params: dict = {"apiKey": NEWS_API_KEY, "qInTitle": company_name}
 
-        news_response: requests.models.Response = requests.get(NEWS_ENDPOINT, params=news_params)
+        news_response: requests.models.Response = requests.get(
+            NEWS_ENDPOINT, params=news_params, timeout=20
+        )
         articles: list = news_response.json()["articles"]
         five_articles: list = articles[:5]
+        return five_articles
 
-        # Generate formatted headlines with clickable URLs
+    def format_news_pyqt(self, company_name: str) -> list:
+        """
+        Formats the collected news to suit different PyQt5 UI.
+        Args:
+            company_name: The ticker symbol of the company
+
+        Returns:
+            five_article: The most recent five articles
+        """
+        news: list = self._collect_news(company_name)
         return [
             f"{article['title']}: '<a href=\"{article['url']}\">'{article['url']}'</a>'"
-            for article in five_articles
+            for article in news
         ]
+
+    def format_news_django(self, company_name: str) -> list:
+        """
+        Formats the collected news to suit different django UI.
+        Args:
+            company_name: The ticker symbol of the company
+
+        Returns:
+            five_article: The most recent five articles
+        """
+        news: list = self._collect_news(company_name)
+        return [{"title": article["title"], "url": article["url"]} for article in news]

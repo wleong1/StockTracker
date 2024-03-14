@@ -1,72 +1,95 @@
-from PyQt5.QtWidgets import QWidget, QLabel
-from PyQt5.QtGui import QFont
-from PyQt5 import QtCore
-import requests
+"""This module returns the most recent price of the selected company."""
 
-from processing.data_processing import DataProcessing
-from parameters import ALPHA_VANTAGE_API_KEY, mongodb_connection
+from typing import Union, Any
+import requests
+import yfinance as yf  # type: ignore[import-not-found] # type: ignore[import-untyped] # pylint: disable=E0401
+import pandas as pd
+
+from src.parameters import ALPHA_VANTAGE_API_KEY  # type: ignore[attr-defined]
 
 ALPHA_VANTAGE_ENDPOINT = "https://www.alphavantage.co/query"
 
 
-class LivePriceDisplay(QWidget):
-    """Shows the live prices"""
+class LivePriceDisplay:
+    """
+    Returns the most recent price of the selected company.
+    """
 
-    def __init__(self, parent=None):
-        super().__init__()
-        self.price = None
-        self.parent = parent
-        self.share_price_label = QLabel("Live price")
-        self.share_price_label.setMaximumSize(700, 500)
-        self.share_price_label.setFont(QFont("Times", 24))
-        self.share_price_label.setAlignment(QtCore.Qt.AlignCenter)
-
-    def display_final_price(self, company_name: str) -> None:
+    @staticmethod
+    def display_final_price_av(company_name: str) -> Union[str, dict, Any]:
         """
-        Attempts to display the final price of the selected company.
+        Returns a the price using Alpha Vantage.
 
-        :param company_name: (str) The name of the name to display the final price for.
-        :return:
+        Args:
+            company_name: The ticker symbol of the company
+
+        Returns:
+            The most recent price in string
         """
-
         try:
             # Gets last available price by default
             price_params: dict = {
                 "apikey": ALPHA_VANTAGE_API_KEY,
                 "function": "TIME_SERIES_DAILY",
-                "symbol": company_name
+                "symbol": company_name,
             }
-            price_response: requests.models.Response = requests.get(ALPHA_VANTAGE_ENDPOINT, params=price_params)
+            price_response: requests.models.Response = requests.get(
+                ALPHA_VANTAGE_ENDPOINT, params=price_params, timeout=20
+            )
             if price_response.ok:
                 response_data: dict = price_response.json()
                 if "Time Series (Daily)" in response_data:
                     price_list: dict = response_data["Time Series (Daily)"]
                     most_recent_day: str = next(iter(price_list))
-                    self.price: float = price_list[most_recent_day]["4. close"]
+                    return price_list[most_recent_day]["4. close"]
+                return response_data
+            return price_response
 
-        except (requests.RequestException, KeyError, IndexError):
-            self.price: str = "Error fetching price"
+        except (
+            requests.exceptions.MissingSchema,
+            requests.RequestException,
+            KeyError,
+            IndexError,
+        ):
+            return "Error fetching price"
 
-        self.share_price_label.setText(f"{company_name}:\n{self.price}")
+    @staticmethod
+    def display_final_price_yf(company_name: str) -> Union[float, str]:
+        """
+        Returns a the price using Yahoo Finance.
 
-from pymongo import MongoClient
-client = MongoClient(mongodb_connection)
-database = client.StockTracker
-collection = database.Companies
-projection = {"_id": 0, "name": 1, "price": 1}
+        Args:
+            company_name: The ticker symbol of the company
+
+        Returns:
+            The most recent price in string
+        """
+        try:
+            df: pd.DataFrame = yf.download(company_name)  # pylint: disable=C0103
+            price: float = df.iloc[-1]["Close"]
+            return round(price, 5)
+        except IndexError:
+            return "Error fetching price"
+
+
+# from pymongo import MongoClient
+# client = MongoClient(mongodb_connection)
+# database = client.StockTracker
+# collection = database.Companies
+# projection = {"_id": 0, "name": 1, "price": 1}
 # cursor = collection.find({"name": "MSFT"}, projection)
 # for doc in cursor:
 #     latest_date = doc["price"][0]["date"]
 # print(latest_date)
-symbols = ["AAPL", "MSFT", "AMZN", "GOOGL", "NVDA"]# "TSLA", "GOOG", "BRK.B", "META", "UNH"
-for symbol in symbols:
-    price_params: dict = {
-        "apikey": ALPHA_VANTAGE_API_KEY,
-        "function": "TIME_SERIES_DAILY",
-        "symbol": symbol,
-        "outputsize": "full"
-    }
-    a = requests.get(ALPHA_VANTAGE_ENDPOINT, params=price_params).json()
-    company = {"_id": symbol, "price":[{"date": b, "close": a["Time Series (Daily)"][b]["4. close"]} for b in a["Time Series (Daily)"]]}
-    result = collection.insert_one(company)
-    print(f"Inserted document ID: {result.inserted_id}")
+# symbols = ["AAPL", "MSFT", "AMZN", "GOOGL", "NVDA"]# "TSLA", "GOOG", "BRK.B", "META", "UNH"
+# for symbol in symbols:
+#     price_params: dict = {
+#         "apikey": ALPHA_VANTAGE_API_KEY,
+#         "function": "TIME_SERIES_DAILY",
+#         "symbol": symbol,
+#         "outputsize": "full"
+#     }
+#     a = requests.get(ALPHA_VANTAGE_ENDPOINT, params=price_params).json()
+#     company = {"_id": symbol, "price":[{"date": b, "close": a["Time Series (Daily)"][b]["4. close"]} for b in a["Time Series (Daily)"]]} # pylint: disable=C0301
+#     result = collection.insert_one(company)
+#     print(f"Inserted document ID: {result.inserted_id}")

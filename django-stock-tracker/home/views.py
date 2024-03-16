@@ -13,18 +13,19 @@ import pandas as pd
 models = Model()
 news_disp = NewsDisplay()
 price_disp = LivePriceDisplay()
-expected_headers = ["date", "close"]
-all_data = models.process_data(expected_headers)
+all_data = models.process_data()
 
 def index(request):
-    options = models.generate_company_list()
+    # Uncomment below for full company names in selection rather than ticker symbols.
+    # options = models.generate_company_list()[1]
+    options = models.generate_company_list()[0]
     return render(request, 'dashboard.html', {'dropdown_items': options}) 
     
 def update_graph(request):
     company = request.GET.get('company')
     raw_data = all_data[company]
     data = {
-        "date": raw_data["date"],
+        "date": raw_data["trade_date"],
         "close": raw_data["close"]
     }
     df = pd.DataFrame(data)

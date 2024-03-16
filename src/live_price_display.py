@@ -4,6 +4,7 @@ from typing import Union, Any
 import requests
 import yfinance as yf  # type: ignore[import-not-found] # type: ignore[import-untyped] # pylint: disable=E0401
 import pandas as pd
+# import psycopg2
 
 from src.parameters import ALPHA_VANTAGE_API_KEY  # type: ignore[attr-defined]
 
@@ -64,6 +65,13 @@ class LivePriceDisplay:
         Returns:
             The most recent price in string
         """
+        # Uncomment below for full company names in selection rather than ticker symbols.
+        # conn = psycopg2.connect(database = "stocks", user='postgres', password='123456')
+        # cursor = conn.cursor()
+        # company_name = company_name.replace("\xa0", " ")
+        # cursor.execute(f"SELECT ticker FROM companies WHERE company_name = '{company_name}';")
+        # company_name = cursor.fetchall()[0]
+        # conn.close()
         try:
             df: pd.DataFrame = yf.download(company_name)  # pylint: disable=C0103
             price: float = df.iloc[-1]["Close"]

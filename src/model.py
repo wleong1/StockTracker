@@ -1,34 +1,39 @@
 """This module reads csv data files and processes them into the required format"""
 
-from typing import Union
-import os
+from typing import Union, Tuple
+import warnings
+import psycopg2  # pylint: disable=E0401
 import pandas as pd
+
+warnings.filterwarnings("ignore")
 
 
 class Model:
     """Processes data and returns data in required format"""
 
     def __init__(self) -> None:
-        self.path: str = (
-            "../individual_stocks_5yr/"
-        )
+        self.path: str = "../individual_stocks_5yr/"
 
-    def generate_company_list(self) -> list:
+    @staticmethod
+    def generate_company_list() -> Tuple[list, list]:
         """
         Returns a list of companies.
 
         :return: (list) A list of companies.
         """
-        company_list: list = []
-        expected_headers: list = ["date", "close"]
-        for _, _, filenames in os.walk(self.path):
-            for file in filenames:
-                if file.endswith(".csv"):
-                    if self.check_headers_and_data(file, expected_headers):
-                        company_name: str = file[:-9]
-                        company_list.append(company_name)
-        company_list.sort()
-        return company_list
+        conn = psycopg2.connect(database="stocks", user="postgres", password="123456")
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM companies;")
+        records = cursor.fetchall()
+        ticker_list: list = []
+        companies_list: list = []
+        for row in records:
+            (_, ticker, company) = row
+            company = company.replace("\xa0", " ")
+            ticker_list.append(ticker)
+            companies_list.append(company)
+        conn.close()
+        return ticker_list, companies_list
 
     def check_headers_and_data(self, file, expected_headers) -> bool:
         """
@@ -70,37 +75,31 @@ class Model:
             return False
         return has_expected_headers and has_data
 
-    def process_data(self, expected_headers: list) -> Union[pd.DataFrame, str]:
+    def process_data(self) -> Union[pd.DataFrame, str]:
         """
         Slices the data as required.
 
         :return: (DataFrame) A DataFrame containing required information of all companies.
         """
-        companies_list: list = self.generate_company_list()
+        companies_list: Tuple[list, list] = self.generate_company_list()
         companies_data: dict = {}
-        try:
-            for company in companies_list:
-                csv_file: str = f"{self.path}{company}_data.csv"
-                parse_dates: list = ["date"]
-                df: pd.DataFrame = pd.read_csv(  # pylint: disable=C0103
-                    csv_file,
-                    header=0,
-                    usecols=expected_headers,
-                    skip_blank_lines=True,
-                    dtype={"date": "string", "close": "float64"},
-                    parse_dates=parse_dates,
-                )
-                df.dropna(how="all", subset="date", inplace=True)
-                df.interpolate(method="linear", inplace=True)  # pylint: disable=E1101
-                df["date"] = pd.to_datetime(df["date"])
-                df["date"] = df["date"].dt.strftime("%Y-%m-%d")
-                df["close"] = pd.to_numeric(df["close"])
-                modified_data: dict = df.to_dict("list")
-                companies_data[company] = modified_data
-            all_companies_data: pd.DataFrame = pd.DataFrame(companies_data)
-            return all_companies_data
-        except (ValueError, TypeError, KeyError):
-            return (
-                "Please ensure each header is unique, data is correct, "
-                "or expected_headers and process_data are configured correctly"
-            )
+        conn: psycopg2.extensions.connection = psycopg2.connect(
+            database="stocks", user="postgres", password="123456"
+        )
+        number_of_companies: int = len(companies_list[0])
+        for company_idx in range(1, number_of_companies + 1):
+            query: str = f"SELECT trade_date, close FROM stock_prices_main \
+            WHERE company_id = {company_idx} ORDER BY trade_date ASC;"
+            company_df: pd.DataFrame = pd.read_sql(query, conn)
+            company_df["trade_date"] = pd.to_datetime(company_df["trade_date"])
+            company_df["trade_date"] = company_df["trade_date"].dt.strftime("%Y-%m-%d")
+            company_df["close"] = pd.to_numeric(company_df["close"])
+            modified_data: dict = company_df.to_dict("list")
+            curr_company_ticker: list = companies_list[0][company_idx - 1]
+            companies_data[curr_company_ticker] = modified_data
+            # Uncomment below for full company names in selection rather than ticker symbols.
+            # curr_company_name = companies_list[1][company_idx-1]
+            # companies_data[curr_company_name] = modified_data
+        all_companies_data: pd.DataFrame = pd.DataFrame(companies_data)
+        conn.close()
+        return all_companies_data

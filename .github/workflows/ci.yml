@@ -39,7 +39,7 @@ jobs:
           python-version: 3.x
       - name: Install Dependencies
         run: |
-          pip install mypy requests types-requests pandas-stubs
+          pip install mypy requests types-requests pandas-stubs types-psycopg2
       - name: mypy
         run: |
           mypy src/

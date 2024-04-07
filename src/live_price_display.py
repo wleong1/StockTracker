@@ -22,10 +22,10 @@ class LivePriceDisplay:
         Returns a the price using Alpha Vantage.
 
         Args:
-            company_name: The ticker symbol of the company
+            company_name: The ticker symbol of the company.
 
         Returns:
-            The most recent price in string
+            The most recent price.
         """
         try:
             # Gets last available price by default
@@ -57,13 +57,13 @@ class LivePriceDisplay:
     @staticmethod
     def display_final_price_yf(company_name: str) -> Union[float, str]:
         """
-        Returns a the price using Yahoo Finance.
+        Returns the price of the selected company using Yahoo Finance.
 
         Args:
-            company_name: The ticker symbol of the company
+            company_name: The ticker symbol of the company.
 
         Returns:
-            The most recent price in string
+            The most recent price.
         """
         # Uncomment below for full company names in selection rather than ticker symbols.
         # conn = psycopg2.connect(database = "stocks", user='postgres', password='123456')

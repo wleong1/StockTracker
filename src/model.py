@@ -22,7 +22,7 @@ class Model:
         :return: (list) A list of companies.
         """
         conn = psycopg2.connect(
-            host="172.19.0.2",
+            host="stocks-postgres",
             database="stocks",
             user="postgres",
             password="123456",
@@ -89,7 +89,11 @@ class Model:
         companies_list: Tuple[list, list] = self.generate_company_list()
         companies_data: dict = {}
         conn: psycopg2.extensions.connection = psycopg2.connect(
-            database="stocks", user="postgres", password="123456"
+            host="stocks-postgres",
+            database="stocks",
+            user="postgres",
+            password="123456",
+            port="5432"
         )
         number_of_companies: int = len(companies_list[0])
         for company_idx in range(1, number_of_companies + 1):

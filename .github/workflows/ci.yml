@@ -70,7 +70,7 @@ jobs:
           python-version: 3.x
       - name: Install Dependencies
         run: |
-          pip install pytest requests pandas yfinance
+          pip install pytest requests pandas yfinance psycopg2-binary
       - name: pytest
         run: |
           pytest tests/

@@ -21,7 +21,7 @@ class Model:
 
         :return: (list) A list of companies.
         """
-        conn = psycopg2.connect(database="stocks", user="postgres", password="123456")
+        conn = psycopg2.connect(host="172.19.0.2", database="stocks", user="postgres", password="123456", port="5432")
         cursor = conn.cursor()
         cursor.execute("SELECT * FROM companies;")
         records = cursor.fetchall()

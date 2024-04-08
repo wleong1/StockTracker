@@ -1,37 +1,46 @@
 """This module configures the streamlit web app."""
+
+from typing import Union, Any
 import json
 import requests
 import plotly.express as px # type: ignore[import-untyped] # pylint: disable=E0401
 import pandas as pd
 import streamlit as st # type: ignore[import-untyped] # pylint: disable=E0401
+from model import Model
+from live_price_display import LivePriceDisplay # type: ignore[import-untyped]
+from news_display import NewsDisplay
 
+models: Model = Model()
+news_disp: NewsDisplay = NewsDisplay()
+price_disp: LivePriceDisplay = LivePriceDisplay()
+all_data: Union[pd.DataFrame, Any] = models.process_data()
 
-company_list_response: requests.Response = requests.get(
-    "http://core-modules:5000/model/generate_company_list"
-    )
-company_list: list = company_list_response.json()
+company_list: list
+company_list, _ = models.generate_company_list()
 st.write("Hello, let's learn more about a company together!")
 company = st.selectbox("Pick a company", [None] + company_list)
 st.write("You selected:", company)
 
 if company:
-    payload: dict = {"company": company}
-    update_response: requests.Response = requests.post(
-        "http://core-modules:5000/update_data", json=payload
-        )
-    price: float = update_response.json()["price"]
-    news: list = update_response.json()["news"]
+    price: float = price_disp.display_final_price_yf(company)
+    news: list = news_disp.format_news_django(company)
     st.sidebar.write(f"{company}'s most recent price: {price}")
 
     news_container = st.sidebar.container()
     for article in news:
         news_container.markdown(f"- [{article['title']}]({article['url']})")
 
-    chart_data: dict = json.loads(update_response.json()["graph"])
-    date: dict
-    close: dict
-    date, close = chart_data["date"].values(), chart_data["close"].values()
-    df = pd.DataFrame(close, date)
+    raw_data: pd.Series = all_data[company]
+    # data: dict = {
+    #     "date": raw_data["trade_date"],
+    #     "close": raw_data["close"]
+    # }
+    # df: pd.DataFrame = pd.DataFrame(data)
+    # chart_data: dict = json.loads(update_response.json()["graph"])
+    # date: dict
+    # close: dict
+    # date, close = chart_data["date"].values(), chart_data["close"].values()
+    df = pd.DataFrame(raw_data["close"], raw_data["trade_date"])
 
     fig = px.line(df)
 

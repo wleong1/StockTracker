@@ -2,8 +2,8 @@
 
 from typing import Union, Tuple
 import warnings
-import psycopg2  # pylint: disable=E0401
 import pandas as pd
+import streamlit as st
 
 warnings.filterwarnings("ignore")
 
@@ -21,23 +21,15 @@ class Model:
 
         :return: (list) A list of companies.
         """
-        conn = psycopg2.connect(
-            host="stocks-postgres",
-            database="stocks",
-            user="postgres",
-            password="123456",
-            port="5432")
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM companies;")
-        records = cursor.fetchall()
+        conn = st.connection("postgresql", type="sql")
+        records = conn.query("SELECT * FROM companies;", ttl="10")
         ticker_list: list = []
         companies_list: list = []
-        for row in records:
-            (_, ticker, company) = row
+        for row in records.itertuples():
+            ticker, company = row.ticker, row.company_name
             company = company.replace("\xa0", " ")
             ticker_list.append(ticker)
             companies_list.append(company)
-        conn.close()
         return ticker_list, companies_list
 
     def check_headers_and_data(self, file, expected_headers) -> bool:
@@ -88,18 +80,12 @@ class Model:
         """
         companies_list: Tuple[list, list] = self.generate_company_list()
         companies_data: dict = {}
-        conn: psycopg2.extensions.connection = psycopg2.connect(
-            host="stocks-postgres",
-            database="stocks",
-            user="postgres",
-            password="123456",
-            port="5432"
-        )
+        conn = st.connection("postgresql", type="sql")
         number_of_companies: int = len(companies_list[0])
         for company_idx in range(1, number_of_companies + 1):
-            query: str = f"SELECT trade_date, close FROM stock_prices_main \
+            query: str = f"SELECT trade_date, close FROM stock_prices \
             WHERE company_id = {company_idx} ORDER BY trade_date ASC;"
-            company_df: pd.DataFrame = pd.read_sql(query, conn)
+            company_df: pd.DataFrame = conn.query(query, ttl="10m")
             company_df["trade_date"] = pd.to_datetime(company_df["trade_date"])
             company_df["trade_date"] = company_df["trade_date"].dt.strftime("%Y-%m-%d")
             company_df["close"] = pd.to_numeric(company_df["close"])
@@ -110,5 +96,10 @@ class Model:
             # curr_company_name = companies_list[1][company_idx-1]
             # companies_data[curr_company_name] = modified_data
         all_companies_data: pd.DataFrame = pd.DataFrame(companies_data)
-        conn.close()
         return all_companies_data
+
+# a = Model()
+# print(a.generate_company_list())
+# a = Model()
+# data = a.process_data()
+# print(data.keys())

@@ -1,6 +1,6 @@
 # app/Dockerfile
 
-FROM python:3.10src/requirements.txt-slim
+FROM python:3.10-slim
 
 WORKDIR /app
 

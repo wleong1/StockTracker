@@ -1,8 +1,8 @@
 """This module displays the most recent news of the selected company if available"""
 
 import requests
+import streamlit as st
 
-from src.parameters import NEWS_API_KEY  # type: ignore[attr-defined]
 
 NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
 
@@ -22,7 +22,7 @@ class NewsDisplay:
         Returns:
             five_article: The most recent five articles
         """
-        news_params: dict = {"apiKey": NEWS_API_KEY, "qInTitle": company_name}
+        news_params: dict = {"apiKey": st.secrets.connections.newsapi["apiKey"], "qInTitle": company_name}
 
         news_response: requests.models.Response = requests.get(
             NEWS_ENDPOINT, params=news_params, timeout=20

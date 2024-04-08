@@ -81,25 +81,21 @@ class Model:
         companies_list: Tuple[list, list] = self.generate_company_list()
         companies_data: dict = {}
         conn = st.connection("postgresql", type="sql")
-        number_of_companies: int = len(companies_list[0])
-        for company_idx in range(1, number_of_companies + 1):
-            query: str = f"SELECT trade_date, close FROM stock_prices \
-            WHERE company_id = {company_idx} ORDER BY trade_date ASC;"
-            company_df: pd.DataFrame = conn.query(query, ttl="10m")
+        query: str = f"SELECT company_id, trade_date, close FROM stock_prices \
+        GROUP BY company_id, trade_date, close ORDER BY trade_date ASC;"
+        all_data = conn.query(query, ttl="10m")
+        grouped_data = all_data.groupby('company_id')[["trade_date", "close"]]
+
+        for company_id, group_data in grouped_data:
+            company_df: pd.DataFrame = group_data
             company_df["trade_date"] = pd.to_datetime(company_df["trade_date"])
             company_df["trade_date"] = company_df["trade_date"].dt.strftime("%Y-%m-%d")
             company_df["close"] = pd.to_numeric(company_df["close"])
             modified_data: dict = company_df.to_dict("list")
-            curr_company_ticker: list = companies_list[0][company_idx - 1]
+            curr_company_ticker: list = companies_list[0][company_id - 1]
             companies_data[curr_company_ticker] = modified_data
             # Uncomment below for full company names in selection rather than ticker symbols.
-            # curr_company_name = companies_list[1][company_idx-1]
+            # curr_company_name = companies_list[1][company_id-1]
             # companies_data[curr_company_name] = modified_data
         all_companies_data: pd.DataFrame = pd.DataFrame(companies_data)
         return all_companies_data
-
-# a = Model()
-# print(a.generate_company_list())
-# a = Model()
-# data = a.process_data()
-# print(data.keys())

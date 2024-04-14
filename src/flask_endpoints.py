@@ -3,12 +3,13 @@
 from typing import Union, Any
 from flask import Flask, jsonify, request # pylint: disable=E0401
 import pandas as pd
-from src.model import Model
-from src.live_price_display import LivePriceDisplay # type: ignore[import-untyped]
-from src.news_display import NewsDisplay
 import sys # pylint: disable=C0411
 import os # pylint: disable=C0411
 sys.path.append(os.getcwd())
+from src.model import Model
+from src.live_price_display import LivePriceDisplay # type: ignore[import-untyped]
+from src.news_display import NewsDisplay
+
 
 models: Model = Model()
 news_disp: NewsDisplay = NewsDisplay()

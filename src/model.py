@@ -22,12 +22,11 @@ class Model:
             None
         """
         self.path: str = "../individual_stocks_5yr/"
-        self.params: dict = {
-                                #  host="stocks-postgres",
-                                 "database":"stocks",
-                                 "user":"postgres",
-                                 "password":"123456",
-                                 "port":"5432"}
+        self.params: dict = {"host":"stocks-postgres",
+                             "database":"stocks",
+                             "user":"postgres",
+                             "password":"123456",
+                             "port":"5432"}
 
     def generate_company_list(self) -> Tuple[list, list]:
         """

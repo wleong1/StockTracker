@@ -11,11 +11,14 @@ The ***web app container*** receives the data from the ***business logic contain
 As each container depends on one another. It is vital to set them up accordingly. Before you start, ensure that you have the folllowing dependencies installed:
 -  Docker
 -  net-tools (to get your IP address)
+-  API Key from NewsAPI
 -  vim (optional)
 
 ## To set-up
 
 1. Clone the project repository using Git.
+
+2. Paste NewsAPI Key into *parameters.py* under *NEWS_API_KEY*
 
 2. There are three methods to provide the ***database container*** with the backup (*.dump*) file:
 

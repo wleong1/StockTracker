@@ -34,11 +34,11 @@ StockTracker is designed to simplify stock analysis and decision-making. It fetc
 
 ## **Installation**
 
-Please refer to  for detailed installation instructions.
+Please refer to the [how-to guide](https://wleong1.github.io/StockTracker/how-to-guides/) for detailed installation instructions.
 
 ## **Screenshots**
 
-![image](./docs/user-interface-diagram.png)
+![image](./docs/assets/user-interface-diagram.png)
 
 The image showcases the GUI, featuring elements such as the company selection dropdown menu, latest closing price, current news, and historical performance.
 

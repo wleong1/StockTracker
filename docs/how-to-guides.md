@@ -63,13 +63,13 @@ As each container depends on one another. It is vital to set them up accordingly
     If successful, you should see three different parts as illustrated below:
   
     - Stocks-postgres
-    ![alt text](postgres-container-setup.png)
+    ![alt text](./assets/postgres-container-setup.png)
 
     - Streamlit
-    ![alt text](streamlit-container-setup.png)
+    ![alt text](./assets/streamlit-container-setup.png)
 
     - Core-modules
-    ![alt text](core-modules-container-setup.png)
+    ![alt text](./assets/core-modules-container-setup.png)
 
 4. Once user is able to see the three successful images, user can now go to **127.0.0.1:8501** using your web browser to access the app.
 
@@ -92,7 +92,7 @@ As each container depends on one another. It is vital to set them up accordingly
 
 ### 1. Load metadata error
 
-![alt text](load-metadata-error.png)
+![alt text](./assets/load-metadata-error.png)
 
 Could either remove ```"credsStore": "desktop.exe"``` from ```~/.docker/config.json``` **OR** ```docker pull postgres && docker pull ubuntu:22.04 && docker pull python:3.10-slim```
 

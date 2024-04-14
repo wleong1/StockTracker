@@ -32,7 +32,7 @@ The main components of this project are:
 ## User Interface
 
 ### User Interface
-![alt text](user-interface-diagram.png)
+![alt text](./assets/user-interface-diagram.png)
 
 The image above illustrates what a user would see if the project is set up successfully.
 
@@ -40,7 +40,7 @@ The image above illustrates what a user would see if the project is set up succe
 
 ### Architecture Diagram
 
-![alt text](architecture-diagram.png)
+![alt text](./assets/architecture-diagram.png)
 
 The idea behind the project is to split each microservice into respective containers:
 

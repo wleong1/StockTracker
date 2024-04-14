@@ -6,8 +6,8 @@ financial year and calculator.
 
 ## Table Of Contents
 
-1. [How-To Guides](how-to-guides.md)
-2. [Explanation](explanation.md)
+1. [Explanation](explanation.md)
+2. [How-To Guides](how-to-guides.md)
 3. [Reference](reference.md)
 
 ## Project Overview

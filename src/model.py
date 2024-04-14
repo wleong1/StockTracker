@@ -22,17 +22,18 @@ class Model:
             None
         """
         self.path: str = "../individual_stocks_5yr/"
-        self.params: dict = dict(host="stocks-postgres",
-                                 database="stocks",
-                                 user="postgres",
-                                 password="123456",
-                                 port="5432")
+        self.params: dict = {
+                                #  host="stocks-postgres",
+                                 "database":"stocks",
+                                 "user":"postgres",
+                                 "password":"123456",
+                                 "port":"5432"}
 
     def generate_company_list(self) -> Tuple[list, list]:
         """
         Returns a list of companies.
 
-        Args: 
+        Args:
             None
 
         Returns:
@@ -45,6 +46,8 @@ class Model:
         ticker_list: list = []
         companies_list: list = []
         for row in records:
+            ticker: str
+            company: str
             (_, ticker, company) = row
             company = company.replace("\xa0", " ")
             ticker_list.append(ticker)
@@ -56,7 +59,7 @@ class Model:
         """
         Checks if each csv file has the expected headers and at least one data point for each header
 
-        Args: 
+        Args:
             file: The name of the file being checked
             expected_headers: The list of headers required
 
@@ -109,7 +112,7 @@ class Model:
         companies_list: Tuple[list, list] = self.generate_company_list()
         companies_data: dict = {}
         conn: psycopg2.extensions.connection = psycopg2.connect(**self.params)
-        query: str = f"SELECT company_id, trade_date, close FROM stock_prices_main \
+        query: str = "SELECT company_id, trade_date, close FROM stock_prices_main \
         GROUP BY company_id, trade_date, close ORDER BY trade_date ASC;"
         all_data: pd.DataFrame = pd.read_sql(query, conn)
         grouped_data = all_data.groupby('company_id')[["trade_date", "close"]]
@@ -119,7 +122,8 @@ class Model:
             company_df["trade_date"] = company_df["trade_date"].dt.strftime("%Y-%m-%d")
             company_df["close"] = pd.to_numeric(company_df["close"])
             modified_data: dict = company_df.to_dict("list")
-            curr_company_ticker: list = companies_list[0][company_id - 1]
+            assert isinstance(company_id, int)
+            curr_company_ticker: str = companies_list[0][int(company_id) - 1]
             companies_data[curr_company_ticker] = modified_data
             # Uncomment below for full company names in selection rather than ticker symbols.
             # curr_company_name = companies_list[1][company_id-1]

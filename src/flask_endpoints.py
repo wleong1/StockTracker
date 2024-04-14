@@ -6,9 +6,9 @@ import pandas as pd
 import sys # pylint: disable=C0411
 import os # pylint: disable=C0411
 sys.path.append(os.getcwd())
-from src.model import Model
-from src.live_price_display import LivePriceDisplay # type: ignore[import-untyped]
-from src.news_display import NewsDisplay
+from src.model import Model # pylint: disable=C0413
+from src.live_price_display import LivePriceDisplay # type: ignore[import-untyped] # pylint: disable=C0413
+from src.news_display import NewsDisplay # pylint: disable=C0413
 
 
 models: Model = Model()

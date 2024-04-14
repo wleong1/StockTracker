@@ -8,7 +8,10 @@ plugins:
 
 nav:
   - Stock Tracker Docs: index.md
-  - tutorials.md
+  - Explanation: explanation.md
   - How-To Guides: how-to-guides.md
-  - reference.md
-  - explanation.md
+  - Reference: reference.md
+
+markdown_extensions:
+  - pymdownx.tabbed:
+      alternate_style: true

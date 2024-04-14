@@ -1,0 +1,64 @@
+version: '3'
+
+# Microservices
+services:
+  # Postgresql database container
+  db:
+    build: ./db_dir
+    container_name: stocks-postgres
+    privileged: true
+    ports:
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+    volumes:
+      - nfs-volume:/nfs
+    networks: 
+      - stocks-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h stocks-postgres -U postgres -p 5432 | grep 'accepting connections'"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Core container
+  core:
+    build: ./src
+    container_name: core-modules
+    ports:
+      - 5000:5000
+    volumes:
+      - ./src:/usr/workspace
+    networks:
+      - stocks-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Streamlit app container
+  web:
+    build: ./streamlit
+    container_name: streamlit-container
+    ports: 
+      - 8501:8501
+    volumes:
+      - ./streamlit:/app
+    networks:
+      - stocks-network
+    depends_on:
+        - core
+
+# Volume for NFS
+volumes:
+  nfs-volume:
+    driver: local
+    driver_opts:
+      type: "nfs"
+      o: "addr=${HOST_IP},nolock,soft,rw,nfsvers=4"
+      device: ":${PWD}/network_directory"
+
+# Shared network for microservices
+networks:
+  stocks-network:
+    name: stocks-network

@@ -14,6 +14,7 @@
 
 # Personal files
 parameters.py
+*.dump
 
 # Python runtime
 *.pyc

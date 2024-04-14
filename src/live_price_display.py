@@ -57,13 +57,13 @@ class LivePriceDisplay:
     @staticmethod
     def display_final_price_yf(company_name: str) -> Union[float, str]:
         """
-        Returns a the price using Yahoo Finance.
+        Returns the price of the selected company using Yahoo Finance.
 
         Args:
-            company_name: The ticker symbol of the company
+            company_name: The ticker symbol of the company.
 
         Returns:
-            The most recent price in string
+            The most recent price.
         """
         # Uncomment below for full company names in selection rather than ticker symbols.
         # conn = psycopg2.connect(database = "stocks", user='postgres', password='123456')
@@ -78,26 +78,3 @@ class LivePriceDisplay:
             return round(price, 5)
         except IndexError:
             return "Error fetching price"
-
-
-# from pymongo import MongoClient
-# client = MongoClient(mongodb_connection)
-# database = client.StockTracker
-# collection = database.Companies
-# projection = {"_id": 0, "name": 1, "price": 1}
-# cursor = collection.find({"name": "MSFT"}, projection)
-# for doc in cursor:
-#     latest_date = doc["price"][0]["date"]
-# print(latest_date)
-# symbols = ["AAPL", "MSFT", "AMZN", "GOOGL", "NVDA"]# "TSLA", "GOOG", "BRK.B", "META", "UNH"
-# for symbol in symbols:
-#     price_params: dict = {
-#         "apikey": ALPHA_VANTAGE_API_KEY,
-#         "function": "TIME_SERIES_DAILY",
-#         "symbol": symbol,
-#         "outputsize": "full"
-#     }
-#     a = requests.get(ALPHA_VANTAGE_ENDPOINT, params=price_params).json()
-#     company = {"_id": symbol, "price":[{"date": b, "close": a["Time Series (Daily)"][b]["4. close"]} for b in a["Time Series (Daily)"]]} # pylint: disable=C0301
-#     result = collection.insert_one(company)
-#     print(f"Inserted document ID: {result.inserted_id}")

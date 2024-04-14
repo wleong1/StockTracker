@@ -20,7 +20,7 @@ As each container depends on one another. It is vital to set them up accordingly
 
 2. Paste NewsAPI Key into *parameters.py* under *NEWS_API_KEY*
 
-2. There are three methods to provide the ***database container*** with the backup (*.dump*) file:
+3. There are three methods to provide the ***database container*** with the backup (*.dump*) file:
 
     === "The NFS method"
 
@@ -61,7 +61,7 @@ As each container depends on one another. It is vital to set them up accordingly
 
         3. In the terminal, type ```docker copy ./network_directory/db.dump stocks-postgres:/nfs```
 
-3. Run ```docker compose up```
+4. Run ```docker compose up```
 
     If successful, you should see three different parts as illustrated below:
   
@@ -74,7 +74,7 @@ As each container depends on one another. It is vital to set them up accordingly
     - Core-modules
     ![alt text](./assets/core-modules-container-setup.png)
 
-4. Once user is able to see the three successful images, user can now go to **127.0.0.1:8501** using your web browser to access the app.
+5. Once user is able to see the three successful images, user can now go to **127.0.0.1:8501** using your web browser to access the app.
 
 ## To stop the application
 

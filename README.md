@@ -4,6 +4,8 @@ StockTracker is a Python application that help analyse and visualise stock perfo
 
 Please head to [StockTracker](https://wleong1.github.io/StockTracker/) for more detailed explanation.
 
+A version of the web app that contains part of the database has been deployed [here](https://wleong1-stocktracker.streamlit.app/).
+
 ## Table of Contents
 
 - [Project Description](#project-description)

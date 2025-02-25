@@ -14,7 +14,7 @@ from src.news_display import NewsDisplay # pylint: disable=C0413
 models: Model = Model()
 news_disp: NewsDisplay = NewsDisplay()
 price_disp: LivePriceDisplay = LivePriceDisplay()
-all_data: Union[pd.DataFrame, Any] = models.process_data()
+
 
 app = Flask(__name__)
 
@@ -28,10 +28,11 @@ def update_graph(company: str) -> str:
     Returns:
         chart_data: A DataFrame containing required information of all companies
     """
-    raw_data: pd.Series = all_data[company]
+    # all_data: Union[pd.DataFrame, Any] = models.process_data(company)
+    raw_data = models.process_data(company)
     data: dict = {
-        "date": raw_data["trade_date"],
-        "close": raw_data["close"]
+        "date": raw_data[0],
+        "close": raw_data[1]
     }
     df: pd.DataFrame = pd.DataFrame(data) # pylint: disable=C0103
     chart_data: str = df.to_json()

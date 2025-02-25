@@ -2,6 +2,10 @@
 from typing import Union, Tuple
 import warnings
 import psycopg2  # pylint: disable=E0401
+from sqlalchemy.engine import URL
+from sqlalchemy import create_engine, MetaData, Column, Integer, Numeric, Date, String, ForeignKey, BigInteger, func
+from sqlalchemy.ext.automap import automap_base
+from sqlalchemy.orm import sessionmaker, mapper, declarative_base, relationship
 import pandas as pd
 
 warnings.filterwarnings("ignore")
@@ -27,6 +31,10 @@ class Model:
                              "user":"postgres",
                              "password":"123456",
                              "port":"5432"}
+        # self.params: dict = {"database":"stocks",
+        #                      "user":"postgres",
+        #                      "password":"123456",
+        #                      "port":"5432"}
 
     def generate_company_list(self) -> Tuple[list, list]:
         """
@@ -38,20 +46,24 @@ class Model:
         Returns:
             A list of companies.
         """
-        conn: psycopg2.extensions.connection = psycopg2.connect(**self.params)
-        cursor = conn.cursor()
-        cursor.execute("SELECT * FROM companies;")
-        records = cursor.fetchall()
+
+        connection_string = f"postgresql://{self.params['user']}:{self.params['password']}@{self.params['host']}:{self.params['port']}/{self.params['database']}"
+        # connection_string = f"postgresql://{self.params['user']}:{self.params['password']}@localhost:{self.params['port']}/{self.params['database']}"
+        engine = create_engine(connection_string)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        rows = session.query(Company).all()
         ticker_list: list = []
         companies_list: list = []
-        for row in records:
-            ticker: str
-            company: str
-            (_, ticker, company) = row
-            company = company.replace("\xa0", " ")
-            ticker_list.append(ticker)
-            companies_list.append(company)
-        conn.close()
+
+        for row in rows:
+            ticker_list.append(row.ticker)
+            companies_list.append(row.company_name)
+
+        session.commit()
+        session.close()
+
         return ticker_list, companies_list
 
     def check_headers_and_data(self, file: str, expected_headers: list) -> bool:
@@ -98,7 +110,7 @@ class Model:
             return False
         return has_expected_headers and has_data
 
-    def process_data(self) -> Union[pd.DataFrame, str]:
+    def process_data(self, company_name: str) -> Union[pd.DataFrame, str]:
         """
         Slices the data as required.
 
@@ -108,25 +120,47 @@ class Model:
         Returns:
             A DataFrame containing required information of all companies.
         """
-        companies_list: Tuple[list, list] = self.generate_company_list()
-        companies_data: dict = {}
-        conn: psycopg2.extensions.connection = psycopg2.connect(**self.params)
-        query: str = "SELECT company_id, trade_date, close FROM stock_prices_main \
-        GROUP BY company_id, trade_date, close ORDER BY trade_date ASC;"
-        all_data: pd.DataFrame = pd.read_sql(query, conn)
-        grouped_data = all_data.groupby('company_id')[["trade_date", "close"]]
-        for company_id, group_data in grouped_data:
-            company_df: pd.DataFrame = group_data
-            company_df["trade_date"] = pd.to_datetime(company_df["trade_date"])
-            company_df["trade_date"] = company_df["trade_date"].dt.strftime("%Y-%m-%d")
-            company_df["close"] = pd.to_numeric(company_df["close"])
-            modified_data: dict = company_df.to_dict("list")
-            assert isinstance(company_id, int)
-            curr_company_ticker: str = companies_list[0][int(company_id) - 1]
-            companies_data[curr_company_ticker] = modified_data
-            # Uncomment below for full company names in selection rather than ticker symbols.
-            # curr_company_name = companies_list[1][company_id-1]
-            # companies_data[curr_company_name] = modified_data
-        all_companies_data: pd.DataFrame = pd.DataFrame(companies_data)
-        conn.close()
-        return all_companies_data
+        # connection_string = f"postgresql://{self.params['user']}:{self.params['password']}@localhost:{self.params['port']}/{self.params['database']}"
+        connection_string = f"postgresql://{self.params['user']}:{self.params['password']}@{self.params['host']}:{self.params['port']}/{self.params['database']}"
+        engine = create_engine(connection_string)
+        Session = sessionmaker(bind=engine)
+        session = Session()
+
+        # Perform the ORM query
+        query = (
+            session.query(StockPrice, Company)
+            .join(Company, StockPrice.company_id == Company.company_id)
+            .filter(Company.ticker == company_name)
+        )
+
+        # Execute the query and fetch results
+        results = query.all()
+        trade_date: list = []
+        close_price: list = []
+        for stock_price, _ in results:
+            trade_date.append(pd.to_datetime(stock_price.trade_date).strftime("%Y-%m-%d"))
+            close_price.append(pd.to_numeric(stock_price.close))
+        session.close()
+        return trade_date, close_price
+
+Base = declarative_base()
+
+class StockPrice(Base):
+    __tablename__ = 'stock_prices'
+    price_id = Column(BigInteger, primary_key=True)
+    company_id = Column(Integer, ForeignKey('companies.company_id'), nullable=False)
+    trade_date = Column(Date, nullable=False)
+    open = Column(Numeric(10, 4), nullable=False)
+    high = Column(Numeric(10, 4), nullable=False)
+    low = Column(Numeric(10, 4), nullable=False)
+    close = Column(Numeric(10, 4), nullable=False)
+    volume = Column(BigInteger, nullable=False)
+    company = relationship('Company', back_populates='stock_prices')
+
+# Define the Company class
+class Company(Base):
+    __tablename__ = 'companies'
+    company_id = Column(Integer, primary_key=True)
+    ticker = Column(String, nullable=False)
+    company_name = Column(String, nullable=False)
+    stock_prices = relationship('StockPrice', back_populates='company')

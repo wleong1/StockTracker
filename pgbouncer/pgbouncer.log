@@ -1,0 +1,12 @@
+2025-02-25 21:35:21.464 GMT [49039] LOG kernel file descriptor limit: 1024 (hard: 1048576); max_client_conn: 100, max expected fd use: 132
+2025-02-25 21:35:21.464 GMT [49039] LOG listening on 0.0.0.0:6432
+2025-02-25 21:35:21.464 GMT [49039] LOG listening on [::]:6432
+2025-02-25 21:35:21.464 GMT [49039] LOG listening on unix:/tmp/.s.PGSQL.6432
+2025-02-25 21:35:21.465 GMT [49039] LOG process up: PgBouncer 1.23.1, libevent 2.1.12-stable (epoll), adns: c-ares 1.18.1, tls: OpenSSL 3.0.2 15 Mar 2022
+2025-02-25 21:35:31.051 GMT [49039] LOG C-0x55aba88e2df0: stocks/postgres@127.0.0.1:37306 login attempt: db=stocks user=postgres tls=no replication=no
+2025-02-25 21:35:31.053 GMT [49039] LOG S-0x55aba88eb770: stocks/postgres@127.0.0.1:5432 new connection to server (from 127.0.0.1:38592)
+2025-02-25 21:35:31.058 GMT [49039] LOG S-0x55aba88eb770: stocks/postgres@127.0.0.1:5432 SSL established: TLSv1.3/TLS_AES_256_GCM_SHA384/ECDH=prime256v1
+2025-02-25 21:35:31.159 GMT [49039] LOG C-0x55aba88e2df0: stocks/postgres@127.0.0.1:37306 closing because: client close request (age=0s)
+2025-02-25 21:35:34.172 GMT [49039] LOG got SIGINT, shutting down, waiting for all servers connections to be released
+2025-02-25 21:35:34.172 GMT [49039] LOG S-0x55aba88eb770: stocks/postgres@127.0.0.1:5432 closing because: pause mode (age=3s)
+2025-02-25 21:35:34.473 GMT [49039] LOG server connections dropped, exiting

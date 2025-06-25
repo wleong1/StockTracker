@@ -4,22 +4,49 @@ version: '3'
 services:
   # Postgresql database container
   db:
-    build: ./db_dir
+    image: postgres:latest
     container_name: stocks-postgres
     privileged: true
-    ports:
-      - 5433:5432
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=123456
     volumes:
-      - nfs-volume:/nfs
+      - ./db/db.sql:/docker-entrypoint-initdb.d/db.sql
     networks: 
       - stocks-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -h stocks-postgres -U postgres -p 5432 | grep 'accepting connections'"]
-      interval: 5s
-      timeout: 5s
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  pgbouncer:
+    build: ./pgbouncer
+    container_name: pgbouncer
+    image: bitnami/pgbouncer:latest
+    environment:
+      - AUTH_TYPE=trust
+      - POOL_MODE=session
+      - PGBOUNCER_MAX_CLIENT_CONN=100
+      - PGBOUNCER_DEFAULT_POOL_SIZE=20
+      - POSTGRESQL_HOST=postgres
+      - POSTGRESQL_USER=postgres
+      - POSTGRESQL_PASSWORD=123456
+    volumes:
+      - ./pgbouncer/pgbouncer.ini:/etc/pgbouncer/pgbouncer.ini
+      - ./pgbouncer/userlist.txt:/etc/pgbouncer/userlist.txt
+    ports:
+      - 6432:6432
+    networks: 
+      - stocks-network
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h db -p 5432 -U postgres"]
+      interval: 10s
+      timeout: 10s
       retries: 5
 
   # Core container
@@ -33,7 +60,7 @@ services:
     networks:
       - stocks-network
     depends_on:
-      db:
+      pgbouncer:
         condition: service_healthy
 
   # Streamlit app container
@@ -48,15 +75,6 @@ services:
       - stocks-network
     depends_on:
         - core
-
-# Volume for NFS
-volumes:
-  nfs-volume:
-    driver: local
-    driver_opts:
-      type: "nfs"
-      o: "addr=${HOST_IP},nolock,soft,rw,nfsvers=4"
-      device: ":${PWD}/network_directory"
 
 # Shared network for microservices
 networks:

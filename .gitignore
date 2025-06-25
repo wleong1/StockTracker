@@ -13,7 +13,7 @@
 *.DS_Store
 
 # Personal files
-parameters.py
+src/parameters.py
 *.dump
 
 # Python runtime

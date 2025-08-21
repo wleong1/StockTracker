@@ -28,15 +28,18 @@ def update_graph(company: str) -> str:
     Returns:
         chart_data: A DataFrame containing required information of all companies
     """
-    # all_data: Union[pd.DataFrame, Any] = models.process_data(company)
-    raw_data = models.process_data(company)
-    data: dict = {
-        "date": raw_data[0],
-        "close": raw_data[1]
-    }
-    df: pd.DataFrame = pd.DataFrame(data) # pylint: disable=C0103
-    chart_data: str = df.to_json()
-    return chart_data
+    try:
+        # all_data: Union[pd.DataFrame, Any] = models.process_data(company)
+        raw_data = models.process_data(company)
+        data: dict = {
+            "date": raw_data[0],
+            "close": raw_data[1]
+        }
+        df: pd.DataFrame = pd.DataFrame(data) # pylint: disable=C0103
+        return df.to_json()
+    except Exception as e:
+        print(f"Error generating graph for {company}: {e}")
+        return "{}"
 
 def update_price(company: str) -> Union[float, str]:
     """
@@ -48,8 +51,13 @@ def update_price(company: str) -> Union[float, str]:
     Returns:
         The most recent price.
     """
-    price: Union[float, str] = price_disp.display_final_price_yf(company)
-    return price
+    try:
+        # price: Union[float, str] = price_disp.display_final_price_yf(company)
+        price: Union[float, str] = price_disp.display_final_price_spring_boot(company)
+        return price
+    except Exception as e:
+        print(f"Error getting price for {company}: {e}")
+        return "N/A"
 
 def update_news(company: str) -> list:
     """
@@ -61,8 +69,13 @@ def update_news(company: str) -> list:
     Returns:
         news: The most recent five articles
     """
-    news: list = news_disp.format_news_django(company)
-    return news
+    try:
+        # news: list = news_disp.format_news_django(company)
+        news: list = news_disp.format_news_spring_boot(company)
+        return news
+    except Exception as e:
+        print(f"Error getting news for {company}: {e}")
+        return []
 
 @app.route("/model/generate_company_list", methods=["GET"])
 def generate_company_list():

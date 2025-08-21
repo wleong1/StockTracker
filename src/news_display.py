@@ -5,6 +5,7 @@ import requests
 from src.parameters import NEWS_API_KEY  # type: ignore[attr-defined]
 
 NEWS_ENDPOINT = "https://newsapi.org/v2/everything"
+NEWS_ENDPOINT_SPRING_BOOT = "http://172.18.34.111:8080"
 
 
 class NewsDisplay:
@@ -57,3 +58,12 @@ class NewsDisplay:
         """
         news: list = self._collect_news(company_name)
         return [{"title": article["title"], "url": article["url"]} for article in news]
+    
+    def format_news_spring_boot(self, company_name: str) -> list:
+        try:
+            news_response: requests.models.Response = requests.get(
+            f"{NEWS_ENDPOINT_SPRING_BOOT}/news/{company_name}", timeout=20
+        )
+            return [{"title": article["title"], "url": article["url"]} for article in news_response.json()]
+        except Exception as e:
+            return e

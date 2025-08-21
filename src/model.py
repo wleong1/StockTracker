@@ -164,3 +164,5 @@ class Company(Base):
     ticker = Column(String, nullable=False)
     company_name = Column(String, nullable=False)
     stock_prices = relationship('StockPrice', back_populates='company')
+
+print(Model().generate_company_list())

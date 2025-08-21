@@ -4,11 +4,13 @@ from typing import Union, Any
 import requests
 import yfinance as yf  # type: ignore[import-not-found] # type: ignore[import-untyped] # pylint: disable=E0401
 import pandas as pd
+import numpy as np
 # import psycopg2
 
-from src.parameters import ALPHA_VANTAGE_API_KEY  # type: ignore[attr-defined]
+from parameters import ALPHA_VANTAGE_API_KEY  # type: ignore[attr-defined]
 
 ALPHA_VANTAGE_ENDPOINT = "https://www.alphavantage.co/query"
+JAVA_ENDPOINT = "http://172.18.34.111:8080"
 
 
 class LivePriceDisplay:
@@ -73,8 +75,44 @@ class LivePriceDisplay:
         # company_name = cursor.fetchall()[0]
         # conn.close()
         try:
-            df: pd.DataFrame = yf.download(company_name)  # pylint: disable=C0103
+            df: pd.DataFrame = pd.DataFrame(yf.download([company_name]))  # pylint: disable=C0103
             price: float = df.iloc[-1]["Close"]
-            return round(price, 5)
+            return round(price.values[0], 5)
         except IndexError:
             return "Error fetching price"
+        
+    @staticmethod
+    def display_final_price_spring_boot(company_name: str) -> Union[float, str]:
+        try:
+            price_response: requests.models.Response = requests.get(
+                f"{JAVA_ENDPOINT}/price/{company_name}" , timeout=20
+            )
+            return np.float64(price_response.json())
+        except Exception as e:
+            return e
+        
+# print(float(LivePriceDisplay().display_final_price_spring_boot("AAL")))
+# print(type(LivePriceDisplay().display_final_price_yf("AAPL")))
+
+# def get_price_from_java(company_name: str) -> Union[float, str]:
+#     try:
+#         # Call the Java microservice
+#         response = requests.get(f"{JAVA_ENDPOINT}/price/{company_name}", timeout=20)
+        
+#         # Raise exception for HTTP errors
+#         response.raise_for_status()
+        
+#         # Parse JSON safely
+#         data = response.json()  # Expecting {"price": 123.45} or similar
+        
+#         # Extract price from JSON
+#         price = np.float64(data["price"])
+#         return price
+#     except requests.exceptions.RequestException as e:
+#         # Network, timeout, connection errors
+#         print(f"Request failed: {e}")
+#         return "N/A"
+#     except (ValueError, KeyError, TypeError) as e:
+#         # JSON parse errors or missing fields
+#         print(f"Error parsing response from Java microservice: {e}")
+#         return "N/A"

@@ -1,0 +1,602 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../explanation/">
+      
+      
+        <link rel="next" href="../reference/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.17">
+    
+    
+      
+        <title>How-To Guides - Stock Tracker</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.7e37652d.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/_mkdocstrings.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#to-set-up" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="Stock Tracker" class="md-header__button md-logo" aria-label="Stock Tracker" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Stock Tracker
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              How-To Guides
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Stock Tracker" class="md-nav__button md-logo" aria-label="Stock Tracker" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Stock Tracker
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Stock Tracker Docs
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../explanation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Explanation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    How-To Guides
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    How-To Guides
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#to-set-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      To set-up
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#to-stop-the-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      To stop the application
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common issues:
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common issues:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-load-metadata-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Load metadata error
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-missing-core-modules-successful-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Missing core-modules successful image
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Reference
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#to-set-up" class="md-nav__link">
+    <span class="md-ellipsis">
+      To set-up
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#to-stop-the-application" class="md-nav__link">
+    <span class="md-ellipsis">
+      To stop the application
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#common-issues" class="md-nav__link">
+    <span class="md-ellipsis">
+      Common issues:
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Common issues:">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-load-metadata-error" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Load metadata error
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-missing-core-modules-successful-image" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Missing core-modules successful image
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+  <h1>How-To Guides</h1>
+
+<p>As mentioned previously, what we are trying to achieve is to have three separate containers, one for each microservice, that communicates with each other via RESTful API and database connection. </p>
+<p>An <strong><em>NFS server</em></strong> is set up to allow sharing of database backup file (<em>.dump</em>) with the <strong><em>database container</em></strong>.</p>
+<p>The <strong><em>database container</em></strong> acts as an NFS client and accesses the directory shared by the <strong><em>NFS server</em></strong>. The <strong><em>database container</em></strong> then restores the database via <em>pg_restore</em>. After that, the <strong><em>database container</em></strong> is ready to accept connections to the database.</p>
+<p>The <strong><em>business logic container</em></strong> receives requests sent from the user via the <strong><em>web app container</em></strong> and sends them to the <strong><em>database container</em></strong> via <em>database connection</em>. After the <strong><em>database container</em></strong> returns the data, the <strong><em>business logic container</em></strong> then processes the data and returns it in a certain format to the <strong><em>web app container</em></strong>.</p>
+<p>The <strong><em>web app container</em></strong> receives the data from the <strong><em>business logic container</em></strong>, does some simple processing and displays the data back to the user.</p>
+<p>As each container depends on one another. It is vital to set them up accordingly. Before you start, ensure that you have the folllowing dependencies installed:
+-  Docker
+-  net-tools (to get your IP address)
+-  API Key from NewsAPI
+-  vim (optional)</p>
+<h2 id="to-set-up">To set-up</h2>
+<ol>
+<li>
+<p>Clone the project repository using Git.</p>
+</li>
+<li>
+<p>Paste NewsAPI Key into <em>parameters.py</em> under <em>NEWS_API_KEY</em></p>
+</li>
+<li>
+<p>There are three methods to provide the <strong><em>database container</em></strong> with the backup (<em>.dump</em>) file:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="__tabbed_1_1">The NFS method</label><label for="__tabbed_1_2">The non-NFS <em>volume mounting</em> method</label><label for="__tabbed_1_3">The non-NFS <em>docker copy</em> method</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<p>As discussed previously, the NFS method sets up an NFS server and shares files with the NFS client.</p>
+<ol>
+<li>
+<p>Get your ip address:</p>
+<p>Open a terminal and type <code>ifconfig</code> or <code>ip a</code> Look for the <em>inet</em> or <em>inet addr</em> entry under the relevant network interface. It is usually the first one from the top.</p>
+</li>
+<li>
+<p>Save your IP Address in a global variable <em>&lt;HOST_IP&gt;</em>.</p>
+<p><code>export HOST_IP=&lt;your IP address&gt;</code></p>
+</li>
+<li>
+<p>Install NFS</p>
+<ol>
+<li><code>sudo apt install nfs-kernel-server</code></li>
+<li><code>sudo systemctl start nfs-kernel-server.service</code></li>
+<li><code>sudo vim /etc/exports</code> NOTE: Replace <em>vim</em> with the editor of your choice.</li>
+<li>Add <code>&lt;path-to-cloned-repository&gt;/network-directory  *(rw,sync,no_root_squash,no_subtree_check)</code></li>
+<li><code>sudo exportfs -a</code></li>
+</ol>
+</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<p>The non-NFS <em>volume mounting</em> method mounts a local volume with the container and allows the container to access the required backup file through the shared volume.</p>
+<ol>
+<li>
+<p>In the <em>docker-compose.yml</em>, comment out the <em>volumes</em> section (lines 53-59).</p>
+</li>
+<li>
+<p>Replace <code>- nfs-volume:/nfs</code> in line 16 with <code>- ./network_directory:/nfs</code></p>
+</li>
+</ol>
+</div>
+<div class="tabbed-block">
+<p>The non-NFS <em>docker copy</em> method uses the <em>docker copy</em> to copy the required file to the correct directory in the container.</p>
+<ol>
+<li>
+<p>In the <em>docker-compose.yml</em>, comment out the <em>volumes</em> section (lines 53-59).</p>
+</li>
+<li>
+<p>In the <em>docker-compose.yml</em>, comment out the <em>volumes</em> section in <em>db</em> (lines 15-16).</p>
+</li>
+<li>
+<p>In the terminal, type <code>docker copy ./network_directory/db.dump stocks-postgres:/nfs</code></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Run <code>docker compose up</code></p>
+<p>If successful, you should see three different parts as illustrated below:</p>
+<ul>
+<li>
+<p>Stocks-postgres
+<img alt="alt text" src="../assets/postgres-container-setup.png" /></p>
+</li>
+<li>
+<p>Streamlit
+<img alt="alt text" src="../assets/streamlit-container-setup.png" /></p>
+</li>
+<li>
+<p>Core-modules
+<img alt="alt text" src="../assets/core-modules-container-setup.png" /></p>
+</li>
+</ul>
+</li>
+<li>
+<p>Once user is able to see the three successful images, user can now go to <strong>127.0.0.1:8501</strong> using your web browser to access the app.</p>
+</li>
+</ol>
+<h2 id="to-stop-the-application">To stop the application</h2>
+<ol>
+<li>
+<p>Run <code>docker compose down</code></p>
+</li>
+<li>
+<p>Run <code>docker image rm stocktracker-db:latest</code></p>
+</li>
+<li>
+<p>Run <code>docker image rm stocktracker-core:latest</code></p>
+</li>
+<li>
+<p>Run <code>docker image rm stocktracker-web:latest</code></p>
+</li>
+<li>
+<p>Run <code>docker network rm stocks-network</code></p>
+</li>
+<li>
+<p>If you have NFS set up, run <code>docker volume rm stocktracker_test-volume</code></p>
+</li>
+</ol>
+<h2 id="common-issues">Common issues:</h2>
+<h3 id="1-load-metadata-error">1. Load metadata error</h3>
+<p><img alt="alt text" src="../assets/load-metadata-error.png" /></p>
+<p>Could either remove <code>"credsStore": "desktop.exe"</code> from <code>~/.docker/config.json</code> <strong>OR</strong> <code>docker pull postgres &amp;&amp; docker pull ubuntu:22.04 &amp;&amp; docker pull python:3.10-slim</code></p>
+<ul>
+<li>Rerun <code>docker compose up</code></li>
+</ul>
+<h3 id="2-missing-core-modules-successful-image">2. Missing core-modules successful image</h3>
+<p>If the <em>streamlit</em> image appeared before the <em>core-modules</em> image, give it 30 seconds and it should appear. This is because the <strong><em>core-modules container</em></strong> is <em>"eager-loading"</em> the data of the database and saving it in a local variable.</p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": [], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.92b07e13.min.js"></script>
+      
+    
+  </body>
+</html>
